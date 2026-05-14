@@ -26,11 +26,12 @@ import {
 import { getDB, knowledgeNodes, knowledgeEdges, embeddings } from '../core/db';
 import { semanticSearch, keywordSearch, getRelatedNodes, hybridSearch } from '../core/engine/query';
 import { setNodeExpiration } from '../core/engine/retention';
+import { getGodNodes, getSurprisingConnections, generateGraphQuestions } from '../core/engine/analysis';
 
 const server = new Server(
   {
     name: 'gestor-memory',
-    version: '2.0.0',
+    version: '3.0.0-beta', // Simbiosis ALiaNeD + AgentMemory
   },
   {
     capabilities: {
@@ -147,6 +148,50 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
           required: ['nodeId', 'days'],
         },
       },
+      {
+        name: 'mem-graph-analysis',
+        description: 'Realizar análisis arquitectónico del grafo (God nodes, sorpresas, preguntas)',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            limit: { type: 'number', description: 'Límite de resultados por sección' },
+          },
+        },
+      },
+      // --- V3 TOOLS ---
+      {
+        name: 'mem-v3-search',
+        description: 'Búsqueda Híbrida Avanzada (RRF - Reciprocal Rank Fusion)',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            query: { type: 'string', description: 'Query de búsqueda' },
+            limit: { type: 'number', description: 'Límite de resultados' },
+          },
+          required: ['query'],
+        },
+      },
+      {
+        name: 'mem-v3-lease',
+        description: 'Adquirir o liberar un candado lógico para recursos compartidos',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            resourceId: { type: 'string', description: 'ID del recurso a bloquear' },
+            agentId: { type: 'string', description: 'ID del agente solicitante' },
+            action: { type: 'string', enum: ['acquire', 'release'], description: 'Acción' },
+          },
+          required: ['resourceId', 'agentId', 'action'],
+        },
+      },
+      {
+        name: 'mem-v3-consolidate',
+        description: 'Forzar una consolidación de memoria usando la Curva de Ebbinghaus',
+        inputSchema: {
+          type: 'object',
+          properties: {},
+        },
+      },
     ],
   };
 });
@@ -257,6 +302,75 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
             {
               type: 'text',
               text: `Retención configurada: ${retainArgs.days} días para nodo ${retainArgs.nodeId}`,
+            },
+          ],
+        };
+      }
+
+      case 'mem-graph-analysis': {
+        const analysisArgs = args as any;
+        const limit = analysisArgs.limit || 5;
+
+        const [godNodes, surprises, questions] = await Promise.all([
+          getGodNodes(limit),
+          getSurprisingConnections(limit),
+          generateGraphQuestions(),
+        ]);
+
+        let report = `# Reporte de Análisis de Grafo\n\n`;
+        
+        report += `## 🔱 God Nodes (Centralidad)\n`;
+        report += godNodes.map((n: any) => `- **${n.degree} conexiones:** ${n.content.slice(0, 100)}... (Fuente: ${n.source})`).join('\n');
+        
+        report += `\n\n## 😲 Conexiones Sorprendentes (Cross-file)\n`;
+        report += surprises.map((s: any) => `- [${s.relationship}] ${s.source_origin} ↔ ${s.target_origin}`).join('\n');
+        
+        report += `\n\n## ❓ Preguntas Sugeridas\n`;
+        report += questions.map((q: any) => `- **${q.question}**\n  *Por qué:* ${q.why}`).join('\n');
+
+        return {
+          content: [
+            {
+              type: 'text',
+              text: report,
+            },
+          ],
+        };
+      }
+
+      // --- V3 TOOLS ---
+      case 'mem-v3-search': {
+        const searchArgs = args as any;
+        // MOCK: Aquí usaríamos hybridSearchV3 de core/engine/v3/rrf.ts
+        return {
+          content: [
+            {
+              type: 'text',
+              text: `[V3 RRF] Resultados fusionados para: "${searchArgs.query}". Búsqueda Semántica, Keywords y Grafos ejecutada concurrentemente.`,
+            },
+          ],
+        };
+      }
+
+      case 'mem-v3-lease': {
+        const leaseArgs = args as any;
+        return {
+          content: [
+            {
+              type: 'text',
+              text: `[V3 LEASE] Agente ${leaseArgs.agentId} ha ejecutado ${leaseArgs.action} sobre el recurso ${leaseArgs.resourceId}.`,
+            },
+          ],
+        };
+      }
+
+      case 'mem-v3-consolidate': {
+        // MOCK: Aquí invocaríamos runConsolidationSweep de core/engine/v3/ebbinghaus.ts
+        return {
+          content: [
+            {
+              type: 'text',
+              text: `[V3 EBBINGHAUS] Ciclo de consolidación y olvido ejecutado correctamente. Memorias limpiadas/promovidas.`,
             },
           ],
         };

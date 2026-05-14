@@ -1,0 +1,3 @@
+0000000000000000000000000000000000000000 7efe9faeb93a5a0b6f9c64e35f97880ab810c91e AlianeD <dev@alianed.com> 1776973139 -0400	clone: from https://github.com/angelarismendyroa-lgtm/Gestor_Memory.git
+7efe9faeb93a5a0b6f9c64e35f97880ab810c91e 9a12e59456e871c05265d3a6470cf4cb1a44cc7f AlianeD <dev@alianed.com> 1777003091 -0400	commit: chore: sync with AlfredyJarvis ecosystem
+9a12e59456e871c05265d3a6470cf4cb1a44cc7f b2d02d7cf3918edd3067d3f73213ec29ee6663b9 AlianeD <dev@alianed.com> 1777066230 -0400	commit: chore: update bin path to point to the correct cli entry point in package.json

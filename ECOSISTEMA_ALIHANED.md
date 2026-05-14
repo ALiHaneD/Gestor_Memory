@@ -1,0 +1,87 @@
+ALIHANED = ES LA MEPRESA DE IA.
+Somos una agencia encargada de crear soluciones SAAS para los negocios de toda la diáspora Latina en Estados Unidos y Europa y Santo Domingo. Nos especializamos estos 4 Renglones: contabilidad, Presencia Online, Automatizacion e inteligencia artificial
+
+ALIHAS=LINEA DE AGENTE MAYORDOMOS ALIANED; EL CLIENTE puede llamarlo como guste pero su nombre como segundo nombre ejemplo: Alihas ALfreD, Alihas Arismendy, Alihas Pedro, etc. Están compuestos por dos cerebro lo que lo convierte en una agente "Amo de llaves" o agente de seguridad empresarial o personal: 1. agente asistente personal + Agente de Neurogestor.
+
+Asistente personal: Compuesto por un modelo local en servidor privado, que se viste de modelos cloud según la especilidad o tarea que e consierne.Utilizando un Vestuairio de modelos Claud / Local Según requiera la privacidad de datos y especialización de la tarea. es multimodal y tiene integración con voz demodeo que puede habar responder con auido. utilizan vapi, livekit cloud segunla configuración.
+repo=https://github.com/arismendyogandomiguelangel-sys/Alihas.git
+
+Asistente Personal: "Alihas" y Amo de LLaves "Alfred" (Basado en Hermes + Livekit Cloud) App local pero se puede gestionar via Telegram u otros canales cuando no ese esta frente al Computador.
+Neurogestor: Es la Plataforma Agentica paralelo o segunda mitad del Amo de LLaves dedicada a la analis de hilo de datos, estructura y gestion de la información Solida (Basado en AionUI+ PaperClip + Gestor Memory + Ruflo + OpenMythos Aislado para Análisis Exhaustivo + Filtro Supabase + GraphiFy + hackingtool)
+
+EL Amo de Llaves en la practica esta conformado por dos agentes: mi asistente personal + NeuroGestor.
+
+el asistente Alihas Mayordomo gestiona el amplio gama de conversaciones no del negocio , sirviendo de fisltro ante el sistema y cara del mismo. su vinculación subconciente con neuro gestor lo coenveirte en el Agente Amo de LLAves que las personas necesitan, asegurando que la operaciones ageteicoas no pasen lolimietes establecidos en políticas, y normas de seguridad. tiene la capadida de vestirsede modelos cloud según loneceoie según comando de voz:
+MODELO LOCAL 
+-qwwe-3.5 xB: modelo local: solo usa ese traje para gestionar información , reuniones ,notas, investigaciones etc de la junta directivas, gesioan la baase de datos privada de alianed o del cliente y la memoria obsidian de conocimientos privados del usuario. 
+
+
+Neurogestor= es una plataforma agentica de seguridad, gestión de datos y gestión de ageNtes. neurogestor limita y establece las políticas que fueron aprobadas por el equipo Humano, vigila cada hiLo de datos SE cumpla y luego gestiona los agentes que  cada openclaw crea. genera uN informe que comparte deo el asistente conviertiendose en us subconceite de seguridad. (Esta plataforma eh puedes integrarse con un Hermes con la API de nvidia para realizar estas esta  seguimiento de los datos pero también con la esquilde paper clip para gestionar de forma más rigurosa o sincronizada el open cloud espíritu sobre el ERP ya que en neurogestor ejerce acción directa sobre este open claw, Esto ayudaría a que el mes tenga utilice a neurogestor como su como parte como su web o dashboard y este este Hermes estaría solamente enfocado en en en esta tarea nos utilizaría para nada más ni se comunicaría con el entorno con con el entorno exterior).  
+
+Neuro gestor se subdivide en dos : Una WorkStation local basado en AionUI (http://100.122.198.58:25808) apuntando a "neurogestor-app.alianed.com" y Una Plataforma Agentica Web "neurogestor.alianed.com" basado Mayormente en Hermes + Paperclip + Agente Ok + Otras herramientas para la Gestion y Westructuracion de los datos. 
+repo=https://github.com/arismendyogandomiguelangel-sys/neurogestor.git
+
+
+
+Herramientas: 
+	AGENTES: 1- Agente Open Claw Cientifico.  2-Openclaw de Campo o porduccion. 3- Opencode.  4- Hermes. 	5.Livekit Cloud. 6. n8n.  7. GestionApp. 8.Erp Odoo version AlihaneD.
+
+	SERVIDORES: 1- Alibaba =2 GB Ram/40 DISCO "OpenClaw Cientifico" Alibaba.  2-Openclaw Mantenimiento 	de Producción "Spirit" 6 GB Ram/50 GB disco. 3-Capa de IA= 12 Ram/100 Gb Disco para NEurogestor y 	Asistente Personal, Livekit Cloud y N8n. 4- OpenMythos= 6Ram/50 GB disco. 5-GestionApp en vercel 	solo soluciones personalizadas. 6.Erp Odoo version AlihaneD en AWSS de Amazon o Google (Proyecto 	empieza en junio).
+	
+	Red= Tailscale.
+
+4. La Pregunta es:  
+	1.Esta bien Conigurado "Neurogestor" el cuales el cerebro Subconsiente de todo el ecositema Alianed? 	2.Como esta la salud de: la app local y la Web neurogestor?
+	3.Estosy considerando establecer el asitente personal una simbiosis con la app local AionUI de neurogestor. y neurogestor dejarlo del todo enfocado en la web. te hace sentido?  o es mejor dejarlo tal cual: que neuro gestor tenga dos versiones por su complejidad y seguridad de su asignación: una local basaa en en AionUI + la Web basada en nuetra armadura neurogestor basada en next +Hermes paperclip, etc etc....  y entonces desplegar una nuevo Hermes pero solo dediado a la asitentcia personal y le agregamos las funciones de livekit cloud para que sea la cara y vos del ecosistema?
+
+5. Recursos:
+https://github.com/arismendyogandomiguelangel-sys/ruflo.git
+https://github.com/arismendyogandomiguelangel-sys/AionUi.git
+https://github.com/arismendyogandomiguelangel-sys/paperclip.git
+https://github.com/arismendyogandomiguelangel-sys/Gestor_Memory.git
+https://github.com/arismendyogandomiguelangel-sys/agent-vault.git   (este es para la gestio del cofre o información de privada co el modelo local por el asistente personal)
+
+### GESTOR_MEMORY: EL ADN DEL ECOSISTEMA
+Gestor_Memory no es un simple programa, es el **ADN y estándar universal** con el que se estructura, gestiona y maneja toda la información a través del ecosistema ALiHaneD. Desde la cabeza hasta los pies, cuando un OpenClaw analiza datos, o cuando se desarrolla un módulo para el Smart-ERP (sea Pyme o Enterprise), todo se construye tomando como base y regla las estructuras de Gestor_Memory. Debido a esto, NeuroGestor puede gestionar de manera impecable y unificada los permisos, políticas de seguridad y el uso de los OpenClaws y los agentes Hermes.
+
+#### Versión 3 (La Glándula Cognitiva)
+En su **Versión 3**, Gestor_Memory da un salto evolutivo y adquiere su propia inteligencia. Integra un LLM interno (Gemma 4 31B) que actúa como un agente de gestión cognitiva. De esta forma, no solo estructura pasivamente los datos, sino que analiza, filtra y extrae el "zumo de conocimiento" activamente. Se sitúa entre NeuroGestor y el Asistente como la "glándula pineal" que consolida los recuerdos de ambos cerebros en tiempo real.
+
+#### Estrategia de Implementación (V3 vs V2)
+Para maximizar la eficiencia y no saturar recursos, la implementación está dividida:
+- **La Cabeza (V3):** La Versión 3 se aplicará **exclusivamente a la Cabeza** del ecosistema (NeuroGestor y el Asistente). Aquí es donde se necesita la potencia del LLM interno para la consolidación compleja y el razonamiento a largo plazo.
+- **Brazos y Pies (V2):** Para los dos OpenClaw (Científico y Spirit) y las plataformas Smart-ERP / GestionApp, se utilizará estrictamente la **Versión 2** de Gestor_Memory. La V2 basta y sobra para garantizar la correcta estructuración y el almacenamiento de datos operativos en producción, sin añadir la sobrecarga de un agente cognitivo interno en entornos donde no es estrictamente necesario.
+
+
+
+Neurogestor gestiona dos open claw
+1. cientifco de sotware: es un desarrollador de sotware con su cuenta gde gitgguhb, dokploy, vercel, neflify para desplegar, un servidor codespace para desplegar cargas grnades de sotfware de forma eficmera.  skil habilidades sde ingeniería inversa etc. no se comunica con producion pertenece exclusivamente a investigación desarrollo. puede enviar una correo o telegram al CEO o a Al asistente personal. entregar una link del repositorio o de la app desplegada informes etc, comparte la base de ZUMO de conociento de trabajo común a los agentes: neurogestor, Spirit. Tienes tiene más permiso piso de creatividad y de cometer errores pero está y fortificado con sus propio servidor su propio code space su propias cuentas de nefli para desplegar aplicaciones recibe una investigación o idea y entrega un repositorio o link de aplicación lista o Link de un archivo en Google o Drive sobre la investigación realizada API res tomada investigación de ingeniería envesa como conectar como desplegar una aplicación etcétera la ingeniería inversa se hace la tipo de investigaciones y desarrollo que hace se basan en 1 de cuatro unos 1 de cuatro primero una investigación o desarrollo a partir de una idea segundo una extracción de API rest Ahí él toma en cuenta y analiza los permisos los niveles de permisos que tenemos para usarla 31 desarrollo a partir de una modificación a una misma a una misma aplicación Open Source por ejemplo si yo le digo créame una aplicación de agente agenda de citas él puede tomar en su repositorio el repositorio de CLA.con y con eso Con eso él puede hacer unas modificaciones al frente agregar la paleta de colores alianet y todo hacer ligeras variaciones al backing E inyectarle nuestro modelo de nuestro protocolo de ges de gestión de datos y estructura de datos internos para que sea compatible con todos nuestros ecosistemas llamado gestión memory Cuatro cuatro ingeniería inversa es cuando yo le digo por ejemplo toma Odu describe y analiza cada punto de esa de esa aplicación o toma un módulo de Twenty CRM y Y hazme un análisis de ese proyecto capas por capa y cómo sería crear nosotros el nuestro Con X lenguaje de programación go, nextjs, o etc.
+
+2. Angel Spirit: es una plataforma de agenteca que sirge de motor , soprote, manteniemto,y gestiond e agentes de campo, que dan vida la capa de ia del ERP de la agecia.  EL Smart ERP de alianed es una sotfwrea que vendemos a negocios y empresas por planes de servicios. tiene capacidad ageteica y se puede desplegar agetes de multiples . además de losmodeluos  genéricos de contabilidad, markeitng, etc basdado en odoo pare mperesas enterprice y en next.js para la linea de neocios de pequeños negocios llamda gestionapp.   ósea que este openclaw gestioan la capa de ia de : Gestion-app  y Smart-ERP AliHaneD 
+
+
+
+MODELOS CLOUD
+- Gemini-3.1-flash-lite-preview: via api de Gemini para conversaciones cotidianas, musica, video, iglesia, viajes.
+- ollama run mistral-large-3:675b-cloud:  Para estudio de markeitng digital, invetigacionde mercado etc.
+- ollama run gemini-3-flash-preview:cloud: para diseño web, skill de herramiten e interacion con el ecosistema Google.
+- ollama run nemotron-3-nano:30b-cloud: coneversacio fluida, llamar herramietnas dentro del ecosistema, ejecutar tareas dentro del ecositema neurogestor, para integración con neurogestor.
+- ollama run qwen3.5:397b-cloud: para analiid de datos, creación de código, repositorios, etc.matemanticas, calclos colejos etc.
+
+
+
+BASE DE DATOS 
+1. BASE DE DATOS DE NEUROGESTOR: ES Es la base de datos que gestiona neurogestor y sirve de filtro o Maya temporal de 3 un día un día 13 7 15 y 30 días en la que y sirve para la estructuración de los datos de acuerdo a su tipo o formato se estructuran y guardan y almacenan los datos para luego extraer de él en tiempo real dos cosas:  1. la información coherente Del gestor de datos auxilian de conocimiento Obsidian OK Y dos el análisis exhaustivo de los hilos de desenlace de datos o ciber seguridad de datos La idea es monitorear cada línea predefinir y estandarizar cada línea desde el punto a hasta el punto Z el hilo de flujo que debe seguir un tacto o acción dentro del sistema eso es eso lo analiza el modelo neumotron de nvidia de Neurogestor en tiempo real continuamente Si algo si un ejemplo si un si presionara un botón en en en el módulo tal del smartter o de la o del dashboard de neurostor de la plataforma presionar un botón genera un correo hasta la cuenta X de Gmail Esa esa esa acción o ese hilo que sufre la los datos desde el punto a hacia el punto X se guarda y se archiva y se predetermina y se establece y se analiza en tiempo real cuando ocurre si en el transcurso hubo alguna activación descrita para desviar ese correo o desviar alguna información es captado y bloqueado O auditado o notificado de acuerdo al grado de severidad Lo primero es la alerta para ver que que que produce luego si se ve una acción sospechosa entonces se pasa una segunda opción de notificar y luego la tercera opción es bloquear o auditar auditar antes de y luego bloquear.
+
+La base de conocimiento obsidian es lo que extrae el zumo de todos los datos estructurados y es común a los 3 agentes operativos que son neurogestor y científico y Spirit y a su vez tiene contacto con el asistente personal pero de manera subconsciente o sea el asistente personal puede consultar esa base de datos pero no está pero no incluye directamente información en la en en esa en esa base de conocimiento el asistente personal tiene su propia base de datos postres SQL para gestionar todo el abanico de información que el filtra organizada estructurada pero no tiene que ver específicamente con la actividad económica que gestionan neurogestor neuro gestor no gestiona información de iglesias de de ajena a lo que es la operatividad de los dos open cloud OK los dos open cloud tienen sus servidores separados su entorno de desarrollo separado y su nivel es de actuación separada el científico tiene más o más permisos de actuación pero está en un entorno separado un servidor cuenta de github su propia base de datos interna claro y su repositorio y un code space efímero para desplegar O software pesado En su propio code Space el despliegue analiza o edita repara crea recrea pruebas fallas despliega su propio dopplon Ploy luego entrega vías correo o repositorio un repositorio limpio y un links de la aplicación bien ya realizada entonces ese correo es remitido por el humano a neurogestor o al o al asistente el cual se encarga de comunicarlo al asitente se encarga entonces inplemntearlo ao aurdtarlo conlo subagetes competentes e implemtarlo en el dokploy de porduccion via spirit.
+Los conocimientos enseñanzas p notificaciones etc procedimientos Spirit el incientífico lo envía a la base de datos a base de conocimiento común oxidan para el conocimiento de neurogestor y expet y a su vez del asistente que el cuerpo de leerlo Asistente puede usar anerosol para analizar YO openclock para analizar y auditar el proyecto antes de desplegarlo.
+
+Es el agente que especial open cloud Spirit tiene su propio servidor es el único que tiene acceso directo y es el que le da vida a la capa de IA, de los servicios de la agencia: aplicaciones, ERP, automatizaciones él es quien gestiona las API y todo para la capa de IA y también es quien crea por ejemplo si si un nuevo cliente entra y no quiere IA solamente quiere el software es la esquina crea la cuenta y todo y le despliega en nuestro servidor o en el servidor que que sea necesario del cliente entonces ese agente tiene su propio Kithub Y el github de producción el privado le sirve para separar cualquier cualquier aplicación que en producción esté fallando OO recibir de neurogestor cualquier repositorio o lo que sea que se vaya a implementar en producción además de que les sirve para crear su propio codespace efímero temporal para hacer pruebas antes de de despliegue y de análisis antes de que entrarlo a producción una vez entra en producción en el giko y cuenta de producción ya no tiene permisos de acciones directas sino de lectura monitoreo auditoría pero en su propio codspace tiene permisos para crear romper auditar ajustar pedir mejor mejoras probar evidenciar errores etc
+
+
+Al final yo necesito tener acceso mi equipo de trabajo va a ser 3 asistentes OO 3 agentes 1 es el agente el asistente personal y vox y boca de todo el cara de todo el ecosistema ese tiene su propio telegram dos el agente favorito mío de desarrollo es el Tony Toni laboratorio que con ese esque vamos a codificar crear cada módulo cada investigación web lo que sea es a través de él pero estará confinado a sus límites no a producción Mi mi a mi laptop a menos que le dé permisos. Tercero voy a tener contacto directo vía telegram con Spirit pero va a ser para eh eh o sea como es la gente que está que tiene la consuma confianza de estar en vivo con producción monitoreando con la herramienta de Grafana todas las notificaciones todos los alarmas van a venir de de parte de él él la va a analizar y si tiene las herramientas ya establecidas y aprendidas el mismo la va a resolver Y la va a comunicar tiene su propio code space para no estresar el el servidor de producción en caso de que necesite aislar Él puede aislar un una automatización un agente o apagarlo si repararlo si tiene toda la información o simplemente desplegarle otro después claro de de notificarme al cliente OO desplegarle o resetearle la la el módulo del cliente siguiendo el protocolo de mantenimiento y gestión de de cuentas De los usuarios el ERP Cada vez que recibe una un repositorio lo despliega en su code space lo prueba lo comprueba de que está bien y luego entonces se lo sube al ERPA la cuenta del cliente asignado o crea un snapchat listo para desplegar cuando sea necesario su objetivo primordial es la estabilidad y monitoreo constante de las métricas de los recursos cloud de producción. 
+
+
+
+
+

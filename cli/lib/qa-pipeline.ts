@@ -10,6 +10,7 @@
 import * as fs from 'fs';
 import * as path from 'path';
 import { execSync } from 'child_process';
+import { getGodNodes, getSurprisingConnections } from '../../core/engine/analysis';
 
 // ── Tipos ────────────────────────────────────────────
 
@@ -67,6 +68,14 @@ export function detectQATools(): QATool[] {
       description: 'Ejecución de colecciones Postman desde CLI',
       isInstalled: isCommandAvailable('newman'),
       installCommand: 'npm install -g newman',
+      isFree: true,
+      requiresApiKey: false,
+    },
+    {
+      name: 'Graph Analysis',
+      description: 'Auditoría arquitectónica basada en el grafo de conocimiento',
+      isInstalled: true,
+      installCommand: 'n/a',
       isFree: true,
       requiresApiKey: false,
     },
@@ -338,5 +347,33 @@ function statusEmoji(status: string): string {
     case 'error': return '❌';
     case 'skipped': return '⏭️';
     default: return '❓';
+  }
+}
+
+/**
+ * Ejecuta análisis arquitectónico del grafo.
+ */
+export async function runGraphAnalysis(projectDir: string): Promise<QAResult> {
+  try {
+    const godNodes = await getGodNodes(5);
+    const surprises = await getSurprisingConnections(5);
+
+    const summary = `${godNodes.length} hubs detectados, ${surprises.length} conexiones cross-file.`;
+    
+    let details = `\n**Top God Nodes:**\n`;
+    details += godNodes.map((n: any) => `- \`${n.source}\`: ${n.degree} conexiones`).join('\n');
+    
+    return {
+      tool: 'Graph Analysis',
+      status: godNodes.some((n: any) => Number(n.degree) > 15) ? 'warning' : 'success',
+      summary,
+      details,
+    };
+  } catch (err: any) {
+    return {
+      tool: 'Graph Analysis',
+      status: 'skipped',
+      summary: `Análisis de grafo no disponible (DB no inicializada o vacía)`,
+    };
   }
 }

@@ -20,6 +20,7 @@ import {
   generateTestSpriteConfig,
   generatePostmanCollection,
   generateQAReport,
+  runGraphAnalysis,
   QAResult,
 } from '../lib/qa-pipeline';
 
@@ -30,6 +31,7 @@ export function qaCommand(program: Command): void {
     .option('--snyk-only', 'Ejecutar solo Snyk')
     .option('--testsprite-only', 'Ejecutar solo TestSprite')
     .option('--postman-only', 'Ejecutar solo Postman')
+    .option('--graph', 'Ejecutar análisis de grafo')
     .option('--full', 'Ejecutar todas las herramientas')
     .option('--path <path>', 'Ruta del proyecto', '.')
     .action(async (options) => {
@@ -51,7 +53,7 @@ export function qaCommand(program: Command): void {
       }
       console.log('');
 
-      const runAll = options.full || (!options.snykOnly && !options.testspriteOnly && !options.postmanOnly);
+      const runAll = options.full || (!options.snykOnly && !options.testspriteOnly && !options.postmanOnly && !options.graph);
 
       // ── Snyk ──────────────────────────────────
       if (runAll || options.snykOnly) {
@@ -119,6 +121,28 @@ export function qaCommand(program: Command): void {
         const pmResult = generatePostmanCollection(projectDir, projectName);
         pmSpinner.succeed(pmResult.summary);
         results.push(pmResult);
+
+        console.log('');
+      }
+
+      // ── Graph Analysis ────────────────────────
+      if (runAll || options.graph) {
+        console.log(chalk.cyan('═'.repeat(50)));
+        console.log(chalk.cyan.bold('  🕸️ Graph Analysis — Auditoría Arquitectónica'));
+        console.log(chalk.cyan('═'.repeat(50)));
+        console.log('');
+
+        const graphSpinner = ora('Analizando grafo de conocimiento...').start();
+        const graphResult = await runGraphAnalysis(projectDir);
+        
+        if (graphResult.status === 'success') {
+          graphSpinner.succeed(graphResult.summary);
+        } else if (graphResult.status === 'warning') {
+          graphSpinner.warn(graphResult.summary);
+        } else {
+          graphSpinner.info(graphResult.summary);
+        }
+        results.push(graphResult);
 
         console.log('');
       }

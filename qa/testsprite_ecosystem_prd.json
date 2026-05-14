@@ -1,0 +1,341 @@
+{
+  "$schema": "https://testsprite.com/schema/config.json",
+  "project": {
+    "name": "AMO_DE_LLAVES - Ecosistema Doble Cerebro",
+    "description": "Sistema Doble Cerebro: Alfred (consciente) + NeuroGestor (subconsciente técnico) operando en simbiosis bajo el motor Hermes.",
+    "version": "2.0",
+    "basedOnPRD": "PRD_AMO_DE_LLAVES_V2.md"
+  },
+  "testing": {
+    "framework": "playwright",
+    "baseUrl": "http://localhost:4173",
+    "headless": true,
+    "timeout": 30000
+  },
+  "mcp": {
+    "server": "@testsprite/testsprite-mcp",
+    "autoFix": false
+  },
+  "test_targets": {
+    "ui_dashboard": "Dashboard Stark - Layout, navegación, animaciones glassmorphism, selectores de modo",
+    "doble_memoria": "Memoria Estructurada (Supabase) + Zumo de Conocimiento (Obsidian)",
+    "backend_integrations": "APIs, Telegram, Google Workspace, Telemetría HMAC"
+  },
+  "milestones": [
+    {
+      "milestoneId": "M1",
+      "title": "UI Dashboard Stark - Layout y Navegación",
+      "description": "TestSprite emula usuario interactuando con la interfaz web",
+      "tests": [
+        {
+          "id": "UI001",
+          "title": "Hito 1 - Layout Principal y Menú de Navegación",
+          "description": "Verificar la carga del layout principal. Hacer clic iterativamente en los enlaces de navegación (NeuroGestor, Assistant, ERP) y confirmar el cambio de rutas (/, /assistant, /erp).",
+          "priority": "Critical",
+          "steps": [
+            {"type": "action", "description": "Navigate to http://localhost:4173/"},
+            {"type": "assertion", "description": "Verify main layout loads without errors"},
+            {"type": "action", "description": "Click NeuroGestor navigation link"},
+            {"type": "assertion", "description": "Verify URL changes to / and content loads"},
+            {"type": "action", "description": "Click Assistant navigation link"},
+            {"type": "assertion", "description": "Verify URL changes to /assistant"},
+            {"type": "action", "description": "Click ERP navigation link"},
+            {"type": "assertion", "description": "Verify URL changes to /erp"}
+          ]
+        },
+        {
+          "id": "UI002",
+          "title": "Hito 2 - Animaciones y Efectos Glassmorphism",
+          "description": "Validar que los efectos glassmorphism (translúcidos), transiciones CSS (hover, fade-ins) y el logo de ALianeD se rendericen sin lanzar errores de consola.",
+          "priority": "High",
+          "steps": [
+            {"type": "action", "description": "Navigate to http://localhost:4173/assistant"},
+            {"type": "action", "description": "Check browser console for errors"},
+            {"type": "assertion", "description": "Verify no JavaScript errors in console"},
+            {"type": "assertion", "description": "Verify glassmorphism panels have backdrop-blur CSS"},
+            {"type": "action", "description": "Hover over interactive elements"},
+            {"type": "assertion", "description": "Verify CSS transitions (hover, fade-ins) are visible"}
+          ]
+        },
+        {
+          "id": "UI003",
+          "title": "Hito 3 - Selectores de Modo en AssistantPage",
+          "description": "En /assistant, hacer clic en los 3 selectores de modo (Asesor/Daniel, Supervisor/José, Asistente/Abigail) y validar que el prompt o UI cambie correctamente según el rol seleccionado.",
+          "priority": "Critical",
+          "steps": [
+            {"type": "action", "description": "Navigate to http://localhost:4173/assistant"},
+            {"type": "action", "description": "Click modo Asesor (Daniel) selector"},
+            {"type": "assertion", "description": "Verify mode indicator shows Asesor/Daniel"},
+            {"type": "action", "description": "Click modo Supervisor (José) selector"},
+            {"type": "assertion", "description": "Verify mode indicator shows Supervisor/José"},
+            {"type": "action", "description": "Click modo Asistente (Abigail) selector"},
+            {"type": "assertion", "description": "Verify mode indicator shows Asistente/Abigail"}
+          ]
+        },
+        {
+          "id": "UI004",
+          "title": "Hito 4 - Controles de Acción y Botones",
+          "description": "Presionar cada botón visible (ej. botón de llamada/micrófono de LiveKit, botón de 'Enviar' en el chat). El estado debe reaccionar.",
+          "priority": "High",
+          "steps": [
+            {"type": "action", "description": "Navigate to http://localhost:4173/assistant"},
+            {"type": "action", "description": "Click LiveKit/microphone button"},
+            {"type": "assertion", "description": "Verify UI shows 'conectando' state or modal"},
+            {"type": "action", "description": "Fill test message in chat input"},
+            {"type": "action", "description": "Click 'Enviar' button"},
+            {"type": "assertion", "description": "Verify message appears in chat or loading state"}
+          ]
+        },
+        {
+          "id": "UI005",
+          "title": "Hito 5 - Secciones Anexas ERP y NeuroGestor",
+          "description": "En /erp y /, buscar y hacer clic en cada botón de acción (reportes, sincronización, auditorías) validando que la interfaz no colapse.",
+          "priority": "High",
+          "steps": [
+            {"type": "action", "description": "Navigate to http://localhost:4173/erp"},
+            {"type": "action", "description": "Find and click 'Reportes' button"},
+            {"type": "assertion", "description": "Verify no 404 or 500 error, content loads"},
+            {"type": "action", "description": "Find and click 'Sincronización' button"},
+            {"type": "assertion", "description": "Verify no 404 or 500 error"},
+            {"type": "action", "description": "Navigate to /neurogestor (root)"},
+            {"type": "action", "description": "Find and click 'Auditorías' button"},
+            {"type": "assertion", "description": "Verify no 404 or 500 error"}
+          ]
+        }
+      ]
+    },
+    {
+      "milestoneId": "M2",
+      "title": "Doble Memoria - Estructurada y Zumo de Conocimiento",
+      "description": "Alfred recupera y procesa información de sus dos cerebros",
+      "tests": [
+        {
+          "id": "MEM001",
+          "title": "Hito 6 - Memoria Estructurada (Base de Datos)",
+          "description": "Probar inserción y lectura de datos relacionales en la BD PostgreSQL/Supabase usando Drizzle ORM (vía /api/memory/health).",
+          "priority": "Critical",
+          "steps": [
+            {"type": "action", "description": "Send GET request to http://localhost:4173/api/memory/health"},
+            {"type": "assertion", "description": "Verify 200 OK response with status JSON"},
+            {"type": "action", "description": "Send POST request with test data to /api/memory/save"},
+            {"type": "assertion", "description": "Verify data is stored in database"},
+            {"type": "action", "description": "Query the saved data back"},
+            {"type": "assertion", "description": "Verify data is retrievable"}
+          ]
+        },
+        {
+          "id": "MEM002",
+          "title": "Hito 7 - Zumo de Conocimiento (Obsidian/Markdown)",
+          "description": "Validar que el motor (Gestor_Memory) pueda parsear, leer y hacer consultas (RAG) a los documentos dentro de la carpeta Doc-Arismendy.",
+          "priority": "High",
+          "steps": [
+            {"type": "action", "description": "Send query request to Gestor_Memory wiki-query endpoint"},
+            {"type": "action", "description": "Query about 'reglas de negocio' or 'Alfred configuration'"},
+            {"type": "assertion", "description": "Verify RAG returns relevant document excerpts"},
+            {"type": "action", "description": "Verify documents from Doc-Arismendy are accessible"},
+            {"type": "assertion", "description": "Verify Alfred can read business rules from Obsidian vault"}
+          ]
+        },
+        {
+          "id": "MEM003",
+          "title": "Hito 8 - Sincronización Cruzada",
+          "description": "Ejecutar un flujo donde Alfred cruce un dato del usuario (Supabase) con una regla de negocio del Zumo de Conocimiento (Obsidian) y formule una respuesta unificada.",
+          "priority": "High",
+          "steps": [
+            {"type": "action", "description": "Store user preference in Supabase"},
+            {"type": "action", "description": "Query business rule from Obsidian vault"},
+            {"type": "action", "description": "Send message to Alfred chat that requires both sources"},
+            {"type": "assertion", "description": "Verify Alfred provides unified response combining both sources"}
+          ]
+        }
+      ]
+    },
+    {
+      "milestoneId": "M3",
+      "title": "Backend, Integraciones Agent-Native y Telemetría",
+      "description": "APIs centrales, Telegram, Google Workspace, Telemetría HMAC-SHA256",
+      "tests": [
+        {
+          "id": "API001",
+          "title": "Hito 9 - APIs Centrales",
+          "description": "Consumir los endpoints del motor de Python (/health, /chat) y del proxy de Express (/api/ollama/models).",
+          "priority": "Critical",
+          "steps": [
+            {"type": "action", "description": "Send GET to /health endpoint"},
+            {"type": "assertion", "description": "Verify 200 OK with health status JSON"},
+            {"type": "action", "description": "Send POST to /chat endpoint with test message"},
+            {"type": "assertion", "description": "Verify chat response is returned"},
+            {"type": "action", "description": "Send GET to /api/ollama/models"},
+            {"type": "assertion", "description": "Verify list of Ollama models is returned"}
+          ]
+        },
+        {
+          "id": "API002",
+          "title": "Hito 10 - Google Workspace (CLI/GWS)",
+          "description": "Probar la habilidad de Alfred para delegar y leer correo a través de los wrappers CLI y el servidor mcp-google.",
+          "priority": "Medium",
+          "steps": [
+            {"type": "action", "description": "Test if gws command is available in environment"},
+            {"type": "assertion", "description": "Verify gws CLI responds or MCP server is accessible"},
+            {"type": "action", "description": "Execute test email read operation"},
+            {"type": "assertion", "description": "Verify email operations are functional"}
+          ]
+        },
+        {
+          "id": "API003",
+          "title": "Hito 11 - Webhooks de Telegram",
+          "description": "Simular peticiones POST entrantes simulando el envío de mensajes desde la app de Telegram hacia Alfred, verificando que procesa y responde.",
+          "priority": "Critical",
+          "steps": [
+            {"type": "action", "description": "Navigate to http://localhost:4173/assistant"},
+            {"type": "action", "description": "Configure Telegram with valid bot token"},
+            {"type": "action", "description": "Click 'PROBAR Y LINK' button"},
+            {"type": "assertion", "description": "Verify Telegram connection status shows 'CONECTADO'"},
+            {"type": "action", "description": "Simulate incoming Telegram webhook POST"},
+            {"type": "assertion", "description": "Verify Alfred processes and responds to message"}
+          ]
+        },
+        {
+          "id": "API004",
+          "title": "Hito 12 - Seguridad y Telemetría (HMAC-SHA256)",
+          "description": "Simular una acción crítica en la UI y comprobar que el sistema intercepta la acción para emitir un payload de telemetría (Eco) al endpoint /api/telemetry/report hacia NeuroGestor, firmado criptográficamente.",
+          "priority": "Critical",
+          "steps": [
+            {"type": "action", "description": "Navigate to http://localhost:4173/assistant"},
+            {"type": "action", "description": "Trigger critical action (e.g., save API key)"},
+            {"type": "action", "description": "Monitor network for telemetry POST to /api/telemetry/report"},
+            {"type": "assertion", "description": "Verify HMAC-SHA256 signed payload is sent"},
+            {"type": "assertion", "description": "Verify payload contains required telemetry fields"}
+          ]
+        }
+      ]
+    },
+    {
+      "milestoneId": "M4",
+      "title": "Conexiones Internas - Proveedores y Vestuarios",
+      "description": "Pruebas adicionales basadas en la arquitectura del sistema",
+      "tests": [
+        {
+          "id": "CONN001",
+          "title": "Conexión Telegram - Token Válido",
+          "description": "Verifica que al ingresar un token válido de Telegram y presionar 'Probar y Link', la conexión se establece correctamente.",
+          "priority": "Critical",
+          "steps": [
+            {"type": "action", "description": "Navigate to http://localhost:4173/assistant"},
+            {"type": "action", "description": "Fill Telegram token field with valid bot token"},
+            {"type": "action", "description": "Click 'PROBAR Y LINK' button"},
+            {"type": "assertion", "description": "Verify status changes to 'CONECTADO'"}
+          ]
+        },
+        {
+          "id": "CONN002",
+          "title": "Conexión Telegram - Token Inválido",
+          "description": "Verifica que al ingresar un token inválido se muestra mensaje de error.",
+          "priority": "High",
+          "steps": [
+            {"type": "action", "description": "Navigate to http://localhost:4173/assistant"},
+            {"type": "action", "description": "Fill Telegram token field with invalid token 'invalid_token_123'"},
+            {"type": "action", "description": "Click 'PROBAR Y LINK' button"},
+            {"type": "assertion", "description": "Verify status changes to 'ERROR'"}
+          ]
+        },
+        {
+          "id": "CONN003",
+          "title": "Detectar Modelos Ollama Locales",
+          "description": "Verifica que al hacer scan en Ollama se detectan los modelos locales disponibles.",
+          "priority": "Critical",
+          "steps": [
+            {"type": "action", "description": "Navigate to http://localhost:4173/assistant"},
+            {"type": "action", "description": "Click 'Re-scan Ollama' or refresh models button"},
+            {"type": "action", "description": "Wait for discovery to complete"},
+            {"type": "assertion", "description": "Verify at least one Ollama model appears in picker"}
+          ]
+        },
+        {
+          "id": "CONN004",
+          "title": "Chat con Modelo Ollama Local",
+          "description": "Verifica que al seleccionar un modelo Ollama y enviar un mensaje, se recibe respuesta.",
+          "priority": "Critical",
+          "steps": [
+            {"type": "action", "description": "Select an Ollama model from the picker"},
+            {"type": "action", "description": "Type 'Hola, como estas?' in chat"},
+            {"type": "action", "description": "Send message"},
+            {"type": "assertion", "description": "Verify response appears from Ollama model"}
+          ]
+        },
+        {
+          "id": "CONN005",
+          "title": "OpenRouter - Modelos Cloud Gratuitos",
+          "description": "Verifica que al usar un modelo gratuito como Qwen/Qwen3 se reciben respuestas.",
+          "priority": "High",
+          "steps": [
+            {"type": "action", "description": "Select a free OpenRouter model"},
+            {"type": "action", "description": "Type test message in chat"},
+            {"type": "action", "description": "Send message"},
+            {"type": "assertion", "description": "Verify response appears"}
+          ]
+        },
+        {
+          "id": "CONN006",
+          "title": "Vestuario Personalizado con Ollama",
+          "description": "Verifica que se puede crear un vestuario personalizado usando modelo local Ollama.",
+          "priority": "High",
+          "steps": [
+            {"type": "action", "description": "Select Ollama model"},
+            {"type": "action", "description": "Fill costume name 'Asistente Legal Yolanda'"},
+            {"type": "action", "description": "Click 'Guardar en el Closet'"},
+            {"type": "assertion", "description": "Verify costume appears in Closet"}
+          ]
+        },
+        {
+          "id": "CONN007",
+          "title": "Vestuario Personalizado con OpenRouter",
+          "description": "Verifica que se puede crear un vestuario personalizado usando modelo cloud Diego.",
+          "priority": "High",
+          "steps": [
+            {"type": "action", "description": "Select OpenRouter model"},
+            {"type": "action", "description": "Fill costume name 'Abogado Fiscal Diego'"},
+            {"type": "action", "description": "Click 'Guardar en el Closet'"},
+            {"type": "assertion", "description": "Verify costume appears in Closet"}
+          ]
+        },
+        {
+          "id": "CONN008",
+          "title": "Cambiar Entre Vestuarios de Diferentes Proveedores",
+          "description": "Verifica que alternar entre vestuarios Ollama y OpenRouter cambia correctamente el modelo activo.",
+          "priority": "High",
+          "steps": [
+            {"type": "action", "description": "Select Ollama costume"},
+            {"type": "assertion", "description": "Verify active model shows Ollama badge"},
+            {"type": "action", "description": "Select OpenRouter costume"},
+            {"type": "assertion", "description": "Verify active model shows OpenRouter"}
+          ]
+        }
+      ]
+    }
+  ],
+  "ecosystem_architecture": {
+    "alfred_cara": {
+      "description": "Cerebro Consciente - Hermes Agent Alianetizado",
+      "components": ["Gestor_Memory (SQL + Obsidian)", "Telegram bot", "Dashboard Stark"],
+      "repos": "https://github.com/angelarismendyroa-lgtm/Alfred.git"
+    },
+    "neurogestor_cerebro": {
+      "description": "Cerebro Subconsciente - Paperclip Adapter",
+      "components": ["CyberSeguridad", "Oracle DB", "NVIDIA NemoClaw"],
+      "repos": "https://github.com/angelarismendyroa-lgtm/neurogestor-app.git"
+    },
+    "memoria_comun": {
+      "description": "Obsidian - Zumo de Conocimiento",
+      "path": "Doc-Arismendy/"
+    },
+    "openclaw1_cientifico": {
+      "description": "OpenClaw 1 - Investigacion y Desarrollo",
+      "specs": "4GB RAM / 40GB Disco"
+    },
+    "openclaw2_spirit": {
+      "description": "OpenClaw 2 - ERP y Servicios ALIANED",
+      "specs": "6GB RAM / 50GB Disco (Ollama local)"
+    }
+  }
+}

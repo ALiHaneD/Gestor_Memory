@@ -4,7 +4,7 @@
   "description": "Universal Configuration Agentic v2",
   "main": "dist/index.js",
   "bin": {
-    "gestor-memory": "dist/index.js"
+    "gestor-memory": "dist/cli/index.js"
   },
   "scripts": {
     "build": "tsc",
@@ -14,10 +14,12 @@
     "visualizer": "cd visualizer && npm run dev"
   },
   "dependencies": {
+    "@google/generative-ai": "^0.24.1",
     "@modelcontextprotocol/sdk": "^1.29.0",
     "@supabase/supabase-js": "^2.39.0",
     "chalk": "^4.1.2",
     "commander": "^11.1.0",
+    "dotenv": "^17.4.2",
     "drizzle-orm": "^0.29.0",
     "handlebars": "^4.7.8",
     "inquirer": "^8.2.6",

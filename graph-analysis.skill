@@ -1,0 +1,54 @@
+# Skill: Graph Analysis (Graphify) — Gestor_Memory v2
+
+> Esta skill habilita el análisis arquitectónico profundo basado en grafos de conocimiento. Inspirada en Graphify.
+
+---
+
+## 🔱 Capacidades
+
+Esta skill permite al agente (o al usuario) realizar las siguientes auditorías sobre el grafo de memoria:
+
+1. **Detección de God Nodes:** Identifica los nodos que concentran demasiadas conexiones, lo cual suele indicar componentes sobrecargados o abstracciones que necesitan ser divididas.
+2. **Surprising Connections:** Revela relaciones inesperadas que cruzan fronteras de archivos fuente o comunidades estructurales.
+3. **Generación de Preguntas:** Sugiere interrogantes basadas en anomalías del grafo (nodos aislados, puentes frágiles).
+
+---
+
+## 🛠️ Herramientas Disponibles
+
+### MCP Tool: `mem-graph-analysis`
+Ejecuta un análisis completo y genera un reporte estructurado.
+
+**Parámetros:**
+- `limit`: (opcional) Número de resultados a mostrar por sección.
+
+---
+
+## 🧠 Cuándo usar esta Skill
+
+- Durante el **QA Pipeline** para evaluar la salud arquitectónica del proyecto.
+- Cuando se realiza un **Handoff**, para resumir los puntos críticos del sistema.
+- Para **Refactorización**, identificando los "God Nodes" que deben ser simplificados.
+- Para **Onboarding**, usando las "Preguntas Sugeridas" para entender áreas grises del código.
+
+---
+
+## 📝 Ejemplo de Reporte
+
+```markdown
+# Reporte de Análisis de Grafo
+
+## 🔱 God Nodes
+- **15 conexiones:** `core/engine/query.ts`
+- **12 conexiones:** `mcp-server/index.ts`
+
+## 😲 Conexiones Sorprendentes
+- [depends_on] `cli/index.ts` ↔ `core/db.ts`
+
+## ❓ Preguntas Sugeridas
+- **¿Qué relación tiene "node-45" con el resto del proyecto?**
+  *Por qué:* Este nodo existe en la memoria pero no tiene conexiones.
+```
+
+---
+*Gestor_Memory — Ecosistema ALiaNeD*

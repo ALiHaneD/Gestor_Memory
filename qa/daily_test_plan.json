@@ -1,0 +1,355 @@
+{
+  "testPlanName": "AMO_DE_LLAVES Daily Test Plan - TestSprite",
+  "version": "1.0",
+  "lastUpdated": "2026-04-25",
+  "configuration": {
+    "baseUrl": "http://localhost:4173",
+    "headless": true,
+    "timeout": 30000,
+    "models": {
+      "yolanda": {
+        "cloud": "openrouter",
+        "local": "ollama"
+      },
+      "diego": {
+        "cloud": ["openrouter/free", "openrouter/paid"]
+      }
+    }
+  },
+  "sections": [
+    {
+      "sectionId": "S01",
+      "name": "🔗 Telegram Integration",
+      "description": "Pruebas de conexión y funcionalidad de Telegram",
+      "tests": [
+        {
+          "id": "TG001",
+          "title": "Guardar token de Telegram y verificar conexión",
+          "description": "Verifica que al ingresar un token válido de Telegram y presionar 'Probar y Link', la conexión se establece correctamente",
+          "category": "Telegram Setup",
+          "priority": "Critical",
+          "steps": [
+            {"type": "action", "description": "Navigate to http://localhost:4173/assistant"},
+            {"type": "action", "description": "Fill Telegram token field with valid bot token"},
+            {"type": "action", "description": "Click 'PROBAR Y LINK' button"},
+            {"type": "assertion", "description": "Verify status changes to 'CONECTADO ✅'"}
+          ]
+        },
+        {
+          "id": "TG002",
+          "title": "Manejar token inválido de Telegram",
+          "description": "Verifica que al ingresar un token inválido se muestra mensaje de error",
+          "category": "Telegram Setup",
+          "priority": "High",
+          "steps": [
+            {"type": "action", "description": "Navigate to http://localhost:4173/assistant"},
+            {"type": "action", "description": "Fill Telegram token field with invalid token 'invalid_token_123'"},
+            {"type": "action", "description": "Click 'PROBAR Y LINK' button"},
+            {"type": "assertion", "description": "Verify status changes to 'ERROR ❌'"}
+          ]
+        },
+        {
+          "id": "TG003",
+          "title": "Recibir notificación push desde Telegram",
+          "description": "Verifica que al recibir un mensaje en Telegram se muestra como notificación push en la UI",
+          "category": "Telegram Notifications",
+          "priority": "High",
+          "steps": [
+            {"type": "action", "description": "Ensure Telegram is connected (TG001 passed)"},
+            {"type": "action", "description": "Send test message from Telegram to the bot"},
+            {"type": "assertion", "description": "Verify push notification appears in Alfred UI"}
+          ]
+        },
+        {
+          "id": "TG004",
+          "title": "Enviar mensaje desde Alfred a Telegram",
+          "description": "Verifica que al usar la función de envío a Telegram, el mensaje llega correctamente",
+          "category": "Telegram Notifications",
+          "priority": "Medium",
+          "steps": [
+            {"type": "action", "description": "Ensure Telegram is connected"},
+            {"type": "action", "description": "Type message in Alfred chat"},
+            {"type": "action", "description": "Use Telegram send action"},
+            {"type": "assertion", "description": "Verify message delivered to Telegram channel"}
+          ]
+        }
+      ]
+    },
+    {
+      "sectionId": "S02",
+      "name": "🤖 Ollama Provider (Yolanda - Modelo Local)",
+      "description": "Pruebas del modelo local Ollama para Yolanda",
+      "tests": [
+        {
+          "id": "OLL001",
+          "title": "Detectar modelos disponibles en Ollama",
+          "description": "Verifica que al hacer scan en Ollama se detectan los modelos locales disponibles",
+          "category": "Ollama Discovery",
+          "priority": "Critical",
+          "steps": [
+            {"type": "action", "description": "Navigate to http://localhost:4173/assistant"},
+            {"type": "action", "description": "Click 'Re-scan Ollama' or refresh models button"},
+            {"type": "action", "description": "Wait for discovery to complete"},
+            {"type": "assertion", "description": "Verify at least one Ollama model appears in the model picker"}
+          ]
+        },
+        {
+          "id": "OLL002",
+          "title": "Cambiar a modelo Ollama y verificar respuesta",
+          "description": "Verifica que al seleccionar un modelo Ollama y enviar un mensaje, se recibe respuesta",
+          "category": "Ollama Chat",
+          "priority": "Critical",
+          "steps": [
+            {"type": "action", "description": "Select an Ollama model from the picker"},
+            {"type": "action", "description": "Type 'Hola, ¿cómo estás?' in chat"},
+            {"type": "action", "description": "Send message"},
+            {"type": "assertion", "description": "Verify response appears from Ollama model"}
+          ]
+        },
+        {
+          "id": "OLL003",
+          "title": "Verificar badge de modelo activo muestra Ollama",
+          "description": "Verifica que al seleccionar Ollama, el ModelIndicator muestra el nombre correcto",
+          "category": "Ollama UI",
+          "priority": "High",
+          "steps": [
+            {"type": "action", "description": "Select Ollama model from picker"},
+            {"type": "assertion", "description": "Verify ModelIndicator badge shows 'ollama/' prefix"}
+          ]
+        },
+        {
+          "id": "OLL004",
+          "title": "Manejar error de conexión Ollama offline",
+          "description": "Verifica que cuando Ollama no está corriendo se muestra mensaje de error apropiado",
+          "category": "Ollama Error Handling",
+          "priority": "High",
+          "steps": [
+            {"type": "action", "description": "Stop Ollama service"},
+            {"type": "action", "description": "Navigate to http://localhost:4173/assistant"},
+            {"type": "action", "description": "Click 'Re-scan Ollama'"},
+            {"type": "assertion", "description": "Verify error message or fallback to cloud model"}
+          ]
+        }
+      ]
+    },
+    {
+      "sectionId": "S03",
+      "name": "☁️ OpenRouter Provider (Diego - Modelos Cloud)",
+      "description": "Pruebas de modelos cloud gratuitos y de pago para Diego",
+      "tests": [
+        {
+          "id": "OR001",
+          "title": "Conectar con OpenRouter usando API key gratuita",
+          "description": "Verifica que al configurar OpenRouter con API key gratuita se pueden listar modelos",
+          "category": "OpenRouter Setup",
+          "priority": "Critical",
+          "steps": [
+            {"type": "action", "description": "Navigate to API keys settings"},
+            {"type": "action", "description": "Enter OpenRouter API key"},
+            {"type": "action", "description": "Save and verify connection"},
+            {"type": "assertion", "description": "Verify OpenRouter models appear in picker"}
+          ]
+        },
+        {
+          "id": "OR002",
+          "title": "Chat con modelo gratuito OpenRouter",
+          "description": "Verifica que al usar un modelo gratuito como Qwen/Qwen3 se reciben respuestas",
+          "category": "OpenRouter Chat",
+          "priority": "Critical",
+          "steps": [
+            {"type": "action", "description": "Select a free OpenRouter model (e.g., qwen/qwen3)"},
+            {"type": "action", "description": "Type test message in chat"},
+            {"type": "action", "description": "Send message"},
+            {"type": "assertion", "description": "Verify response appears"}
+          ]
+        },
+        {
+          "id": "OR003",
+          "title": "Cambiar entre modelos cloud gratuitos",
+          "description": "Verifica que se puede alternar entre diferentes modelos gratuitos sin errores",
+          "category": "OpenRouter Multi-Model",
+          "priority": "High",
+          "steps": [
+            {"type": "action", "description": "Select Qwen/Qwen3 model"},
+            {"type": "action", "description": "Send test message"},
+            {"type": "action", "description": "Switch to another free model"},
+            {"type": "action", "description": "Send same test message"},
+            {"type": "assertion", "description": "Verify both responses are different"}
+          ]
+        },
+        {
+          "id": "OR004",
+          "title": "Verificar costos estimados en telemetry",
+          "description": "Verifica que la telemetry muestra tokens usados y costo estimado por modelo",
+          "category": "OpenRouter Analytics",
+          "priority": "Medium",
+          "steps": [
+            {"type": "action", "description": "Send several messages with OpenRouter model"},
+            {"type": "action", "description": "Open telemetry/stats panel"},
+            {"type": "assertion", "description": "Verify token count and estimated cost are displayed"}
+          ]
+        }
+      ]
+    },
+    {
+      "sectionId": "S04",
+      "name": "👔 Vestuarios (Costume Management)",
+      "description": "Pruebas completas del sistema de vestuarios/costumes",
+      "tests": [
+        {
+          "id": "VES001",
+          "title": "Guardar vestuario personalizado con Ollama",
+          "description": "Verifica que se puede crear un vestuario personalizado usando modelo local Ollama",
+          "category": "Sastrería (Custom Costume)",
+          "priority": "Critical",
+          "steps": [
+            {"type": "action", "description": "Select Ollama model"},
+            {"type": "action", "description": "Fill costume name 'Asistente Legal Yolanda'"},
+            {"type": "action", "description": "Click '📥 Guardar en el Closet'"},
+            {"type": "assertion", "description": "Verify costume appears in Closet"}
+          ]
+        },
+        {
+          "id": "VES002",
+          "title": "Guardar vestuario personalizado con OpenRouter",
+          "description": "Verifica que se puede crear un vestuario personalizado usando modelo cloud Diego",
+          "category": "Sastrería (Custom Costume)",
+          "priority": "Critical",
+          "steps": [
+            {"type": "action", "description": "Select OpenRouter model"},
+            {"type": "action", "description": "Fill costume name 'Abogado Fiscal Diego'"},
+            {"type": "action", "description": "Click '📥 Guardar en el Closet'"},
+            {"type": "assertion", "description": "Verify costume appears in Closet"}
+          ]
+        },
+        {
+          "id": "VES003",
+          "title": "Activar vestuario y verificar respuesta del modelo correcto",
+          "description": "Verifica que al activar un vestuario se usa el modelo asociado correcto",
+          "category": "Vestuario Activation",
+          "priority": "High",
+          "steps": [
+            {"type": "action", "description": "Create costume with Ollama model"},
+            {"type": "action", "description": "Open Closet and select created costume"},
+            {"type": "action", "description": "Verify ModelIndicator shows Ollama badge"},
+            {"type": "action", "description": "Send test message"},
+            {"type": "assertion", "description": "Verify response comes from Ollama"}
+          ]
+        },
+        {
+          "id": "VES004",
+          "title": "Cambiar entre vestuarios de diferentes proveedores",
+          "description": "Verifica que alternar entre vestuarios Ollama y OpenRouter cambia correctamente el modelo activo",
+          "category": "Vestuario Switching",
+          "priority": "High",
+          "steps": [
+            {"type": "action", "description": "Select Ollama costume"},
+            {"type": "assertion", "description": "Verify active model shows Ollama"},
+            {"type": "action", "description": "Select OpenRouter costume"},
+            {"type": "assertion", "description": "Verify active model shows OpenRouter"}
+          ]
+        },
+        {
+          "id": "VES005",
+          "title": "Eliminar vestuario personalizado",
+          "description": "Verifica que se puede eliminar un vestuario del Closet",
+          "category": "Sastrería (Custom Costume)",
+          "priority": "Medium",
+          "steps": [
+            {"type": "action", "description": "Open Closet with custom costume"},
+            {"type": "action", "description": "Find delete option for custom costume"},
+            {"type": "action", "description": "Confirm deletion"},
+            {"type": "assertion", "description": "Verify costume no longer appears in Closet"}
+          ]
+        }
+      ]
+    },
+    {
+      "sectionId": "S05",
+      "name": "🔌 Conexiones Internas (API Integration)",
+      "description": "Pruebas de la conexión entre componentes internos del sistema",
+      "tests": [
+        {
+          "id": "INT001",
+          "title": "Verify Cerebro health check endpoint",
+          "description": "Verifica que el endpoint de health check de Cerebro responde correctamente",
+          "category": "Internal APIs",
+          "priority": "Critical",
+          "steps": [
+            {"type": "action", "description": "Send request to health check endpoint"},
+            {"type": "assertion", "description": "Verify 200 OK response with status JSON"}
+          ]
+        },
+        {
+          "id": "INT002",
+          "title": "Verify LiveKit token generation",
+          "description": "Verifica que la generación de tokens LiveKit funciona para llamadas en vivo",
+          "category": "Internal APIs",
+          "priority": "High",
+          "steps": [
+            {"type": "action", "description": "Initiate LiveKit call request"},
+            {"type": "assertion", "description": "Verify valid token is generated"}
+          ]
+        },
+        {
+          "id": "INT003",
+          "title": "Verify Supabase connection for telemetry",
+          "description": "Verifica que la telemetría se reporta correctamente a Supabase",
+          "category": "Data Layer",
+          "priority": "Medium",
+          "steps": [
+            {"type": "action", "description": "Send several chat messages"},
+            {"type": "action", "description": "Query telemetry data"},
+            {"type": "assertion", "description": "Verify telemetry records exist in Supabase"}
+          ]
+        }
+      ]
+    },
+    {
+      "sectionId": "S06",
+      "name": "🎨 UI/UX Components",
+      "description": "Pruebas de componentes visuales y glassmorphism",
+      "tests": [
+        {
+          "id": "UI001",
+          "title": "Verify glassmorphism effect on panels",
+          "description": "Verifica que los paneles muestran el efecto glassmorphism con backdrop blur",
+          "category": "Visual Testing",
+          "priority": "Medium",
+          "steps": [
+            {"type": "action", "description": "Navigate to assistant page"},
+            {"type": "assertion", "description": "Verify panels have glassmorphism styling (backdrop-blur)"}
+          ]
+        },
+        {
+          "id": "UI002",
+          "title": "Verify scan-line animations on HUD",
+          "description": "Verifica que las animaciones de scan-line se ejecutan en elementos HUD",
+          "category": "Visual Testing",
+          "priority": "Medium",
+          "steps": [
+            {"type": "action", "description": "Navigate to assistant page"},
+            {"type": "assertion", "description": "Verify HUD elements show scan-line animation"}
+          ]
+        },
+        {
+          "id": "UI003",
+          "title": "Verify responsive layout on mobile",
+          "description": "Verifica que la UI se adapta correctamente en pantallas pequeñas",
+          "category": "Responsive Design",
+          "priority": "Low",
+          "steps": [
+            {"type": "action", "description": "Open browser at 375px width (mobile)"},
+            {"type": "action", "description": "Navigate to assistant page"},
+            {"type": "assertion", "description": "Verify layout is usable and not broken"}
+          ]
+        }
+      ]
+    }
+  ],
+  "dailySections": [
+    {"day": "Day 1", "sections": ["S01", "S02"], "focus": "Conexiones básicas: Telegram y Ollama local"},
+    {"day": "Day 2", "sections": ["S03", "S04"], "focus": "Modelos cloud y vestuarios"},
+    {"day": "Day 3", "sections": ["S05", "S06"], "focus": "APIs internas y UI/UX"}
+  ]
+}
