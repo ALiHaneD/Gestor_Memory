@@ -1,0 +1,11 @@
+{
+  "version": "2.0.0",
+  "mode": "destino",
+  "project": "gestor-memory",
+  "stack": {
+    "runtime": "node",
+    "language": "TypeScript"
+  },
+  "databases": [],
+  "createdAt": "2026-04-23T17:59:41.449Z"
+}

@@ -1,21 +1,29 @@
-# GEMINI.md
-> Antigravity / Gemini CLI: lee estos archivos antes de empezar.
+# GEMINI.md — Antigravity / Gemini CLI · {{project}}
+> Generado por Gestor_Memory v{{dnaVersion}}
 
-@AGENTS.md
-@.dev/prd.md
-@.dev/roadmap.md
-@.dev/stack-analysis.md
-@.dev/handoffs/current-state.md
+## ADN del proyecto
 
-## MCP Servers activos
-Ver mcp_config.json en la raíz del proyecto.
+Lee estos archivos al iniciar:
+- `.gestor-memory/CONTEXT.md` — resumen maestro (Tier 1)
+- `.dev/handoffs/current-state.md` — estado de la sesión anterior
 
-## Flujo de trabajo
-Sigue el protocolo de Session Start y Session End de AGENTS.md.
+Si necesitas más contexto:
+- `.gestor-memory/MAP.md` — estructura de carpetas (Tier 2)
+- `.gestor-memory/graph/summary.md` — grafo de conocimiento
 
-## QA
-- Ejecuta `gestor-memory qa` al finalizar features críticas
-- Revisa .dev/qa/ para resultados de Snyk y TestSprite
+## Rol de Gemini en este proyecto
+
+Contexto amplio: leer codebases grandes, research, integración con GCP/Firebase/Vertex AI,
+planificación, comparación de librerías, orquestación de specs.
+
+## Herramienta MCP
+
+El servidor `gestor-memory` expone `mem-search`, `mem-context`, `mem-save`.
+Configurado en `.mcp.json`.
+
+## Al cerrar sesión
+
+Ejecuta `gestor-memory handoff` para actualizar el handoff y habilitar el traspaso a otro modelo.
 
 ---
-*Generado por Gestor_Memory v2*
+*Gestor_Memory v{{dnaVersion}}*

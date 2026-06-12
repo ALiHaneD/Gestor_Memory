@@ -1,22 +1,29 @@
-# CLAUDE.md
-> Claude Code: lee estos archivos antes de empezar.
+# CLAUDE.md — Claude Code · {{project}}
+> Generado por Gestor_Memory v{{dnaVersion}}
 
-@AGENTS.md
-@.dev/prd.md
-@.dev/roadmap.md
-@.dev/stack-analysis.md
+## ADN del proyecto
+
+@.gestor-memory/CONTEXT.md
 @.dev/handoffs/current-state.md
 
-## MCP Servers activos
-- context7: documentación de librerías en tiempo real
-- Ver mcp_config.json para servidores adicionales
+## Tier 2 (si necesitas más contexto)
 
-## Flujo de trabajo
-Sigue el protocolo de Session Start y Session End de AGENTS.md.
+@.gestor-memory/MAP.md
+@.gestor-memory/graph/summary.md
+
+## MCP activo
+
+- `gestor-memory` — mem-context, mem-search, mem-save, mem-relate, mem-graph-analysis
+- Ver `.mcp.json` para servidores adicionales
+
+## Rol de Claude en este proyecto
+
+Auditor ALIHA: seguridad, auth, decisiones con consecuencias a largo plazo, revisión final.
+Para boilerplate y tareas rutinarias: delega a Qwen/Kimi/DeepSeek.
 
 ## QA
-- Ejecuta `gestor-memory qa` al finalizar features críticas
-- Revisa .dev/qa/ para resultados de Snyk y TestSprite
+
+`gestor-memory qa` al finalizar features críticas.
 
 ---
-*Generado por Gestor_Memory v2*
+*Gestor_Memory v{{dnaVersion}}*

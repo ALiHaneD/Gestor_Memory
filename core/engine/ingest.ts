@@ -1,15 +1,46 @@
 /**
  * Ingest Engine — Motor de Ingesta de Conocimiento
- * 
+ *
  * Procesa fuentes:
  * - Markdown (.md)
  * - Código (.ts, .tsx, .js)
  * - JSON (.json)
- * - PDFs (futuro)
  */
 
 import * as fs from 'fs';
 import * as path from 'path';
+
+// =============================================================
+// DENYLIST — Nunca ingerir estos paths/patrones (seguridad A5)
+// =============================================================
+
+export const INGEST_DENYLIST: RegExp[] = [
+  /node_modules/,
+  /\.git\b/,
+  /dist\b/,
+  /build\b/,
+  /\.gestor-memory[/\\]cache/,
+  /\.env/,
+  /credencial/i,
+  /CUENTA/i,
+  /secret/i,
+  /password/i,
+  /\.key$/,
+  /\.pem$/,
+  /\.p12$/,
+  /\.pfx$/,
+  /token.*\.json$/i,
+  /Clave-Vertex/i,
+  /Doc-Arismendy/,
+  /Doc-CEO/,
+  // binarios y media
+  /\.(png|jpg|jpeg|gif|svg|ico|mp4|mp3|mov|avi|pdf|docx?|xlsx?|zip|tar|gz|exe|dll|bin)$/i,
+];
+
+export function isDenied(filePath: string): boolean {
+  const normalized = filePath.replace(/\\/g, '/');
+  return INGEST_DENYLIST.some(pattern => pattern.test(normalized));
+}
 
 interface IngestConfig {
   sources: string[];
@@ -156,29 +187,29 @@ function extractFunctions(code: string): string[] {
 
 // =============================================================
 // MAIN INGEST
+// Acepta rutas de archivo ya resueltas (no patrones glob).
+// El caller (zumo.ts) es responsable de resolver y filtrar con collectFiles().
 // =============================================================
 
 export async function ingest(config: IngestConfig): Promise<Chunk[]> {
   const allChunks: Chunk[] = [];
-  
-  for (const sourcePattern of config.sources) {
-    const files = await glob(sourcePattern);
-    
-    for (const file of files) {
-      const ext = path.extname(file).toLowerCase();
-      const processor = processors[ext];
-      
-      if (processor) {
-        try {
-          const chunks = await processor(file);
-          allChunks.push(...chunks);
-        } catch (err) {
-          console.error(`Error procesando ${file}:`, err);
-        }
+
+  for (const file of config.sources) {
+    if (isDenied(file)) continue;
+
+    const ext = path.extname(file).toLowerCase();
+    const processor = processors[ext];
+
+    if (processor) {
+      try {
+        const chunks = await processor(file);
+        allChunks.push(...chunks);
+      } catch (err) {
+        console.error(`Error procesando ${file}:`, err);
       }
     }
   }
-  
+
   return allChunks;
 }
 

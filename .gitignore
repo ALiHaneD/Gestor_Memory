@@ -1,13 +1,15 @@
-# ─── Gestor_Memory v2 (Entorno de Desarrollo IA) ───
+# ─── Gestor_Memory v3 (Entorno de Desarrollo IA) ───
 .dev/
-.gestor-memory/
+# NOTA: .gestor-memory/ SÍ se versiona (es el ADN portable).
+# Solo el cache local se excluye:
+.gestor-memory/cache/
 
 # ─── Configuración de Agentes IA (reglas internas) ───
 .agent/
 .claude/
 .gemini/
 
-# ─── Documentación interna y datos sensibles ───
+# ─── Documentación interna y datos sensibles (NO indexar, NO subir) ───
 Doc-CEO/
 Doc-Arismendy/
 Auditorias/
@@ -20,6 +22,10 @@ memory-bank/
 *.env
 *.key
 *.pem
+*credencial*
+*CUENTA*
+*secret*
+*token*.json
 
 # ─── Dependencias ───
 node_modules/

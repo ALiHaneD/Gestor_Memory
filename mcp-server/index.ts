@@ -1,200 +1,112 @@
 /**
- * MCP Server — Model Context Protocol Server
+ * MCP Server — Gestor_Memory v3
  *
- * Gestor_Memory usa 3 capas de memoria:
+ * Todas las tools usan LocalStorageAdapter (file-first, sin Postgres requerido).
+ * Regla A5: ninguna tool simula éxito. Si hay error o no hay datos, lo declara.
  *
- * 1. CORE MEMORY (NeuroGestor) — PostgreSQL + pgvector
- *    → Memoria del ecosistema ALiaNeD (negocios, clientes, configuraciones)
- *    → Gestionada por NeuroGestor
- *
- * 2. AGENT MEMORY (ALiHas/Spirit) — SQLite local
- *    → Memoria personal del dueño/agente (vida secular)
- *    → Propia de cada agente
- *
- * 3. SHARED MEMORY — PostgreSQL
- *    → Memoria común entre Spirit y el agente científico
- *    → Compartida para.sync de conocimiento
+ * Tools disponibles:
+ *   mem-context  — Tier 1 + handoff: para que cualquier agente empiece una sesión
+ *   mem-save     — Guardar nodo de conocimiento
+ *   mem-search   — Buscar (semántico si hay embeddings, keyword si no)
+ *   mem-relate   — Crear arista entre nodos
+ *   mem-retain   — Configurar TTL de un nodo
+ *   mem-graph-analysis — Análisis del grafo (god nodes, conexiones, preguntas)
  */
 
 import { Server } from '@modelcontextprotocol/sdk/server/index.js';
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
-import {
-  CallToolRequestSchema,
-  ListToolsRequestSchema,
-} from '@modelcontextprotocol/sdk/types.js';
+import { CallToolRequestSchema, ListToolsRequestSchema } from '@modelcontextprotocol/sdk/types.js';
+import * as fs from 'fs';
+import * as path from 'path';
+import * as crypto from 'crypto';
+import { createStorage } from '../core/storage/local';
+import { resolveProvider, cosineSimilarity } from '../core/embeddings/provider';
 
-import { getDB, knowledgeNodes, knowledgeEdges, embeddings } from '../core/db';
-import { semanticSearch, keywordSearch, getRelatedNodes, hybridSearch } from '../core/engine/query';
-import { setNodeExpiration } from '../core/engine/retention';
-import { getGodNodes, getSurprisingConnections, generateGraphQuestions } from '../core/engine/analysis';
+const PROJECT_DIR = process.env['GM_PROJECT_DIR'] || process.cwd();
+const storage = createStorage(PROJECT_DIR);
 
 const server = new Server(
-  {
-    name: 'gestor-memory',
-    version: '3.0.0-beta', // Simbiosis ALiaNeD + AgentMemory
-  },
-  {
-    capabilities: {
-      tools: {},
-    },
-  }
+  { name: 'gestor-memory', version: '3.0.0' },
+  { capabilities: { tools: {} } }
 );
-
-// =============================================================
-// TYPES
-// =============================================================
-
-interface MemSaveArgs {
-  content: string;
-  source?: string;
-  metadata?: Record<string, any>;
-}
-
-interface MemSearchArgs {
-  query: string;
-  mode?: 'semantic' | 'keyword' | 'hybrid';
-  limit?: number;
-}
-
-interface MemZumoArgs {
-  topic: string;
-}
-
-interface MemRelateArgs {
-  sourceId: string;
-  targetId: string;
-  relationship?: string;
-  weight?: number;
-}
-
-interface MemRetainArgs {
-  nodeId: string;
-  days: number;
-}
-
-type ToolArgs = MemSaveArgs | MemSearchArgs | MemZumoArgs | MemRelateArgs | MemRetainArgs;
 
 // =============================================================
 // TOOLS REGISTRATION
 // =============================================================
 
-server.setRequestHandler(ListToolsRequestSchema, async () => {
-  return {
-    tools: [
-      {
-        name: 'mem-save',
-        description: 'Guardar un nodo de conocimiento en memoria (Core Memory de NeuroGestor)',
-        inputSchema: {
-          type: 'object',
-          properties: {
-            content: { type: 'string', description: 'Contenido del nodo' },
-            source: { type: 'string', description: 'Fuente de origen' },
-            metadata: { type: 'object', description: 'Metadatos adicionales' },
+server.setRequestHandler(ListToolsRequestSchema, async () => ({
+  tools: [
+    {
+      name: 'mem-context',
+      description: 'Devuelve el contexto Tier 1 del proyecto (CONTEXT.md + current-state.md). Llamar al inicio de cualquier sesión para entender el proyecto sin escanear el codebase.',
+      inputSchema: { type: 'object', properties: {} },
+    },
+    {
+      name: 'mem-save',
+      description: 'Guardar un nodo de conocimiento en el grafo del proyecto.',
+      inputSchema: {
+        type: 'object',
+        properties: {
+          content: { type: 'string', description: 'Contenido del nodo' },
+          source: { type: 'string', description: 'Archivo/origen' },
+          metadata: { type: 'object', description: 'Metadatos opcionales' },
+        },
+        required: ['content'],
+      },
+    },
+    {
+      name: 'mem-search',
+      description: 'Buscar conocimiento. Usa embeddings reales si disponibles, keyword (FTS5) si no. Declara qué modo usa.',
+      inputSchema: {
+        type: 'object',
+        properties: {
+          query: { type: 'string', description: 'Consulta de búsqueda' },
+          limit: { type: 'number', description: 'Límite de resultados (default 10)' },
+        },
+        required: ['query'],
+      },
+    },
+    {
+      name: 'mem-relate',
+      description: 'Crear una arista tipada entre dos nodos.',
+      inputSchema: {
+        type: 'object',
+        properties: {
+          sourceId: { type: 'string' },
+          targetId: { type: 'string' },
+          relationship: {
+            type: 'string',
+            enum: ['imports', 'links_to', 'mentions', 'similar_to', 'related_to'],
           },
-          required: ['content'],
+          weight: { type: 'number' },
+        },
+        required: ['sourceId', 'targetId', 'relationship'],
+      },
+    },
+    {
+      name: 'mem-retain',
+      description: 'Marcar un nodo con TTL (días). Informativo — la limpieza se aplica en el próximo zumo.',
+      inputSchema: {
+        type: 'object',
+        properties: {
+          nodeId: { type: 'string' },
+          days: { type: 'number' },
+        },
+        required: ['nodeId', 'days'],
+      },
+    },
+    {
+      name: 'mem-graph-analysis',
+      description: 'Análisis del grafo: nodos más conectados, tipos de aristas, sugerencias.',
+      inputSchema: {
+        type: 'object',
+        properties: {
+          limit: { type: 'number', description: 'Top N resultados por sección (default 5)' },
         },
       },
-      {
-        name: 'mem-search',
-        description: 'Buscar conocimiento (semántico, keywords, o híbrido)',
-        inputSchema: {
-          type: 'object',
-          properties: {
-            query: { type: 'string', description: 'Query de búsqueda' },
-            mode: {
-              type: 'string',
-              enum: ['semantic', 'keyword', 'hybrid'],
-              description: 'Modo de búsqueda',
-            },
-            limit: { type: 'number', description: 'Límite de resultados' },
-          },
-          required: ['query'],
-        },
-      },
-      {
-        name: 'mem-zumo',
-        description: 'Solicitar síntesis de conocimiento (zumo)',
-        inputSchema: {
-          type: 'object',
-          properties: {
-            topic: { type: 'string', description: 'Tema a sintetizar' },
-          },
-          required: ['topic'],
-        },
-      },
-      {
-        name: 'mem-relate',
-        description: 'Crear una relación entre nodos',
-        inputSchema: {
-          type: 'object',
-          properties: {
-            sourceId: { type: 'string', description: 'ID del nodo fuente' },
-            targetId: { type: 'string', description: 'ID del nodo destino' },
-            relationship: { type: 'string', description: 'Tipo de relación' },
-            weight: { type: 'number', description: 'Peso de la relación' },
-          },
-          required: ['sourceId', 'targetId', 'relationship'],
-        },
-      },
-      {
-        name: 'mem-retain',
-        description: 'Configurar retención de un nodo',
-        inputSchema: {
-          type: 'object',
-          properties: {
-            nodeId: { type: 'string', description: 'ID del nodo' },
-            days: { type: 'number', description: 'Días de retención' },
-          },
-          required: ['nodeId', 'days'],
-        },
-      },
-      {
-        name: 'mem-graph-analysis',
-        description: 'Realizar análisis arquitectónico del grafo (God nodes, sorpresas, preguntas)',
-        inputSchema: {
-          type: 'object',
-          properties: {
-            limit: { type: 'number', description: 'Límite de resultados por sección' },
-          },
-        },
-      },
-      // --- V3 TOOLS ---
-      {
-        name: 'mem-v3-search',
-        description: 'Búsqueda Híbrida Avanzada (RRF - Reciprocal Rank Fusion)',
-        inputSchema: {
-          type: 'object',
-          properties: {
-            query: { type: 'string', description: 'Query de búsqueda' },
-            limit: { type: 'number', description: 'Límite de resultados' },
-          },
-          required: ['query'],
-        },
-      },
-      {
-        name: 'mem-v3-lease',
-        description: 'Adquirir o liberar un candado lógico para recursos compartidos',
-        inputSchema: {
-          type: 'object',
-          properties: {
-            resourceId: { type: 'string', description: 'ID del recurso a bloquear' },
-            agentId: { type: 'string', description: 'ID del agente solicitante' },
-            action: { type: 'string', enum: ['acquire', 'release'], description: 'Acción' },
-          },
-          required: ['resourceId', 'agentId', 'action'],
-        },
-      },
-      {
-        name: 'mem-v3-consolidate',
-        description: 'Forzar una consolidación de memoria usando la Curva de Ebbinghaus',
-        inputSchema: {
-          type: 'object',
-          properties: {},
-        },
-      },
-    ],
-  };
-});
+    },
+  ],
+}));
 
 // =============================================================
 // TOOLS IMPLEMENTATION
@@ -202,192 +114,149 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
 
 server.setRequestHandler(CallToolRequestSchema, async (request) => {
   const { name, arguments: args } = request.params;
-
-  if (!args) {
-    return {
-      content: [{ type: 'text', text: 'Error: arguments are required' }],
-    };
-  }
+  if (!args) return { content: [{ type: 'text', text: 'Error: se requieren argumentos' }] };
 
   try {
     switch (name) {
+
+      // ─── mem-context ──────────────────────────────────────────
+      case 'mem-context': {
+        const parts: string[] = [];
+
+        const contextPath = path.join(PROJECT_DIR, '.gestor-memory', 'CONTEXT.md');
+        if (fs.existsSync(contextPath)) {
+          parts.push(fs.readFileSync(contextPath, 'utf-8'));
+        } else {
+          parts.push('⚠ CONTEXT.md no encontrado. Ejecuta `gestor-memory init` para generarlo.');
+        }
+
+        const handoffPath = path.join(PROJECT_DIR, '.dev', 'handoffs', 'current-state.md');
+        if (fs.existsSync(handoffPath)) {
+          parts.push('\n---\n## Estado actual (handoff)\n');
+          parts.push(fs.readFileSync(handoffPath, 'utf-8'));
+        }
+
+        return { content: [{ type: 'text', text: parts.join('\n') }] };
+      }
+
+      // ─── mem-save ─────────────────────────────────────────────
       case 'mem-save': {
-        const db = getDB({} as any);
+        const { content, source, metadata } = args as any;
         const nodeId = crypto.randomUUID();
-        const saveArgs = args as unknown as MemSaveArgs;
-
-        await db.insert(knowledgeNodes).values({
+        storage.saveNode({
           id: nodeId,
-          content: saveArgs.content,
-          source: saveArgs.source || 'mcp',
+          content,
+          source: source || 'mcp-manual',
           sourceType: 'manual',
-          metadata: saveArgs.metadata || {},
+          createdAt: new Date().toISOString(),
+          metadata: metadata || {},
         });
-
-        return {
-          content: [
-            {
-              type: 'text',
-              text: `Nodo guardado con ID: ${nodeId}`,
-            },
-          ],
-        };
+        return { content: [{ type: 'text', text: `Nodo guardado con ID: ${nodeId}` }] };
       }
 
+      // ─── mem-search ───────────────────────────────────────────
       case 'mem-search': {
-        const searchArgs = args as unknown as MemSearchArgs;
-        const results = searchArgs.mode === 'keyword'
-          ? await keywordSearch(searchArgs.query, { limit: searchArgs.limit || 10 })
-          : searchArgs.mode === 'semantic'
-          ? await semanticSearch(searchArgs.query, new Array(1536).fill(0), { limit: searchArgs.limit || 10 })
-          : await hybridSearch(searchArgs.query, new Array(1536).fill(0), { limit: searchArgs.limit || 10 });
+        const { query, limit = 10 } = args as any;
+        const provider = await resolveProvider();
 
-        const text = results.map(n => `- ${n.content.slice(0, 200)}...`).join('\n');
+        if (!provider.isKeywordOnly) {
+          // Búsqueda semántica real: embeber el query y calcular coseno
+          try {
+            const queryEmb = await provider.embed(query);
+            const allNodes = storage.getAllNodes();
+            const scored: { node: typeof allNodes[0]; score: number }[] = [];
 
-        return {
-          content: [
-            {
-              type: 'text',
-              text: `Encontrados ${results.length} resultados:\n\n${text}`,
-            },
-          ],
-        };
+            for (const node of allNodes) {
+              const stored = storage.getEmbedding(node.id);
+              if (!stored) continue;
+              const score = cosineSimilarity(queryEmb.vector, Array.from(stored.vector));
+              scored.push({ node, score });
+            }
+
+            scored.sort((a, b) => b.score - a.score);
+            const top = scored.slice(0, limit);
+
+            if (top.length === 0) {
+              return { content: [{ type: 'text', text: `[${provider.name}] Sin resultados para: "${query}". El grafo puede estar vacío — ejecuta gestor-memory zumo.` }] };
+            }
+
+            const text = top.map(({ node, score }) =>
+              `[${score.toFixed(3)}] ${path.basename(node.source)} — ${node.content.slice(0, 200)}...`
+            ).join('\n\n');
+
+            return { content: [{ type: 'text', text: `Búsqueda semántica (${provider.name}), ${top.length} resultados:\n\n${text}` }] };
+          } catch (err: any) {
+            // Fall through to keyword if embedding fails
+          }
+        }
+
+        // Keyword FTS5
+        const results = storage.searchKeyword(query, limit);
+        if (results.length === 0) {
+          return { content: [{ type: 'text', text: `[keyword/FTS5] Sin resultados para: "${query}". El grafo puede estar vacío — ejecuta gestor-memory zumo.` }] };
+        }
+        const text = results.map(n => `${path.basename(n.source)} — ${n.content.slice(0, 200)}...`).join('\n\n');
+        return { content: [{ type: 'text', text: `Búsqueda keyword (FTS5), ${results.length} resultados:\n\n${text}` }] };
       }
 
-      case 'mem-zumo': {
-        const zumoArgs = args as unknown as MemZumoArgs;
-        const { nodes } = await getRelatedNodes(zumoArgs.topic, 2);
-
-        let synthesis = `# Síntesis: ${zumoArgs.topic}\n\n`;
-        synthesis += `## Nodos Relacionados\n\n`;
-        synthesis += nodes.map(n => `- ${n.content.slice(0, 100)}...`).join('\n');
-
-        return {
-          content: [
-            {
-              type: 'text',
-              text: synthesis,
-            },
-          ],
-        };
-      }
-
+      // ─── mem-relate ───────────────────────────────────────────
       case 'mem-relate': {
-        const db = getDB({} as any);
-        const relateArgs = args as unknown as MemRelateArgs;
-
-        await db.insert(knowledgeEdges).values({
-          sourceId: relateArgs.sourceId,
-          targetId: relateArgs.targetId,
-          relationship: relateArgs.relationship || 'related_to',
-          weight: relateArgs.weight || 1,
-        });
-
-        return {
-          content: [
-            {
-              type: 'text',
-              text: `Relación creada: ${relateArgs.sourceId} → ${relateArgs.relationship} → ${relateArgs.targetId}`,
-            },
-          ],
-        };
+        const { sourceId, targetId, relationship, weight } = args as any;
+        storage.saveEdge({ sourceId, targetId, relationship, weight: weight || 1.0 });
+        return { content: [{ type: 'text', text: `Arista creada: ${sourceId} → [${relationship}] → ${targetId}` }] };
       }
 
+      // ─── mem-retain ───────────────────────────────────────────
       case 'mem-retain': {
-        const retainArgs = args as unknown as MemRetainArgs;
-        await setNodeExpiration(retainArgs.nodeId, retainArgs.days);
-
-        return {
-          content: [
-            {
-              type: 'text',
-              text: `Retención configurada: ${retainArgs.days} días para nodo ${retainArgs.nodeId}`,
-            },
-          ],
-        };
+        const { nodeId, days } = args as any;
+        const node = storage.getNode(nodeId);
+        if (!node) return { content: [{ type: 'text', text: `Error: nodo ${nodeId} no encontrado.` }] };
+        // Guardamos el TTL como metadata
+        storage.saveNode({ ...node, metadata: { ...node.metadata, ttlDays: days, ttlSetAt: new Date().toISOString() } });
+        return { content: [{ type: 'text', text: `TTL configurado: ${days} días para nodo ${nodeId}.` }] };
       }
 
+      // ─── mem-graph-analysis ───────────────────────────────────
       case 'mem-graph-analysis': {
-        const analysisArgs = args as any;
-        const limit = analysisArgs.limit || 5;
+        const { limit = 5 } = args as any;
+        const nodes = storage.getAllNodes();
+        const edges = storage.getAllEdges();
 
-        const [godNodes, surprises, questions] = await Promise.all([
-          getGodNodes(limit),
-          getSurprisingConnections(limit),
-          generateGraphQuestions(),
-        ]);
+        if (nodes.length === 0) {
+          return { content: [{ type: 'text', text: 'El grafo está vacío. Ejecuta `gestor-memory zumo` primero.' }] };
+        }
 
-        let report = `# Reporte de Análisis de Grafo\n\n`;
-        
-        report += `## 🔱 God Nodes (Centralidad)\n`;
-        report += godNodes.map((n: any) => `- **${n.degree} conexiones:** ${n.content.slice(0, 100)}... (Fuente: ${n.source})`).join('\n');
-        
-        report += `\n\n## 😲 Conexiones Sorprendentes (Cross-file)\n`;
-        report += surprises.map((s: any) => `- [${s.relationship}] ${s.source_origin} ↔ ${s.target_origin}`).join('\n');
-        
-        report += `\n\n## ❓ Preguntas Sugeridas\n`;
-        report += questions.map((q: any) => `- **${q.question}**\n  *Por qué:* ${q.why}`).join('\n');
+        const degree: Record<string, number> = {};
+        const byType: Record<string, number> = {};
+        for (const e of edges) {
+          degree[e.sourceId] = (degree[e.sourceId] || 0) + 1;
+          degree[e.targetId] = (degree[e.targetId] || 0) + 1;
+          byType[e.relationship] = (byType[e.relationship] || 0) + 1;
+        }
 
-        return {
-          content: [
-            {
-              type: 'text',
-              text: report,
-            },
-          ],
-        };
-      }
+        const nodeMap = new Map(nodes.map(n => [n.id, n]));
+        const godNodes = Object.entries(degree)
+          .sort((a, b) => b[1] - a[1])
+          .slice(0, limit)
+          .map(([id, deg]) => `- ${deg} conexiones: \`${path.basename(nodeMap.get(id)?.source || id)}\``);
 
-      // --- V3 TOOLS ---
-      case 'mem-v3-search': {
-        const searchArgs = args as any;
-        // MOCK: Aquí usaríamos hybridSearchV3 de core/engine/v3/rrf.ts
-        return {
-          content: [
-            {
-              type: 'text',
-              text: `[V3 RRF] Resultados fusionados para: "${searchArgs.query}". Búsqueda Semántica, Keywords y Grafos ejecutada concurrentemente.`,
-            },
-          ],
-        };
-      }
+        const typeLines = Object.entries(byType).map(([t, c]) => `- \`${t}\`: ${c} aristas`);
 
-      case 'mem-v3-lease': {
-        const leaseArgs = args as any;
-        return {
-          content: [
-            {
-              type: 'text',
-              text: `[V3 LEASE] Agente ${leaseArgs.agentId} ha ejecutado ${leaseArgs.action} sobre el recurso ${leaseArgs.resourceId}.`,
-            },
-          ],
-        };
-      }
+        const report = [
+          `# Análisis del Grafo — ${nodes.length} nodos, ${edges.length} aristas\n`,
+          `## Nodos más conectados\n${godNodes.join('\n') || '(sin conexiones)'}`,
+          `\n## Aristas por tipo\n${typeLines.join('\n') || '(ninguna)'}`,
+          `\n## Estado de embeddings\nModelo activo: ${storage.getEmbeddingModel() || 'ninguno (modo keyword)'}`,
+        ].join('\n');
 
-      case 'mem-v3-consolidate': {
-        // MOCK: Aquí invocaríamos runConsolidationSweep de core/engine/v3/ebbinghaus.ts
-        return {
-          content: [
-            {
-              type: 'text',
-              text: `[V3 EBBINGHAUS] Ciclo de consolidación y olvido ejecutado correctamente. Memorias limpiadas/promovidas.`,
-            },
-          ],
-        };
+        return { content: [{ type: 'text', text: report }] };
       }
 
       default:
-        throw new Error(`Unknown tool: ${name}`);
+        throw new Error(`Tool desconocida: ${name}`);
     }
   } catch (error: any) {
-    return {
-      content: [
-        {
-          type: 'text',
-          text: `Error: ${error.message}`,
-        },
-      ],
-    };
+    return { content: [{ type: 'text', text: `Error: ${error.message}` }] };
   }
 });
 
@@ -398,10 +267,10 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
 async function main() {
   const transport = new StdioServerTransport();
   await server.connect(transport);
-  console.error('Gestor_Memory MCP Server running on stdio');
+  console.error(`Gestor_Memory MCP Server v3 corriendo | proyecto: ${PROJECT_DIR}`);
 }
 
-main().catch((error) => {
-  console.error('Fatal error:', error);
+main().catch(err => {
+  console.error('Fatal:', err);
   process.exit(1);
 });
