@@ -138,7 +138,7 @@ async function initNewProject(projectDir: string, profile: ProjectProfile): Prom
 async function initExistingProject(projectDir: string, profile: ProjectProfile, noInteractive: boolean = false): Promise<void> {
   header('📖 PROYECTO EXISTENTE — Adaptación');
 
-  console.log(chalk.white.bold('  Infraestructura detectada:\n'));
+  console.log(chalk.white.bold('  Infraestructura detectada:\\n'));
 
   // Mostrar lo detectado
   if (profile.stack.framework) {
@@ -288,7 +288,7 @@ async function generateFullStructure(
 
     // Roadmap público (copia simplificada)
     if (!fs.existsSync(path.join(projectDir, 'roadmap.md'))) {
-      const publicRoadmap = `# Roadmap: ${profile.projectName}\n\n> Ver \`.dev/roadmap.md\` para el roadmap detallado de desarrollo.\n> Este archivo es la versión pública.\n\n## Estado\n\n_En desarrollo._\n`;
+      const publicRoadmap = \`# Roadmap: \${profile.projectName}\\n\\n> Ver \\\`.dev/roadmap.md\\\` para el roadmap detallado de desarrollo (Protocolo Open Box v2.0).\\n> Este archivo es la versión pública.\\n\\n## Fases del Proyecto\\n\\n1. 🎨 **Diseño UI/UX**\\n2. 🏗️ **Estructura y Dependencias**\\n3. 🗄️ **Base de Datos**\\n4. ⚡ **Funciones Especiales**\\n5. 🚀 **Despliegue**\\n6. 🧪 **Auditoría y QA**\\n7. 🔄 **Revisión y Ajustes**\\n\\n---\\n_Iniciado el \${new Date().toISOString().split('T')[0]}_\n\`;
       fs.writeFileSync(path.join(projectDir, 'roadmap.md'), publicRoadmap, 'utf-8');
       success('roadmap.md — Roadmap público');
     }
@@ -299,7 +299,7 @@ async function generateFullStructure(
   if (gitResult.created) {
     success('.gitignore — Creado con template completo');
   } else if (gitResult.entriesAdded.length > 0) {
-    success(`.gitignore — Actualizado (añadido: ${gitResult.entriesAdded.join(', ')})`);
+    success(\`.gitignore — Actualizado (añadido: \${gitResult.entriesAdded.join(', ')})\`);
   } else {
     info('.gitignore — Ya contenía todas las entradas necesarias');
   }
@@ -373,13 +373,13 @@ async function promptQASetup(projectDir: string, projectName: string): Promise<v
 
   const tools = detectQATools();
 
-  console.log(chalk.white('  Herramientas disponibles:\n'));
+  console.log(chalk.white('  Herramientas disponibles:\\n'));
   for (const tool of tools) {
     const status = tool.isInstalled
       ? chalk.green('✅ Instalada')
       : chalk.yellow('❌ No instalada');
     const price = tool.isFree ? chalk.green('gratis') : chalk.yellow('requiere cuenta');
-    console.log(`  ${status} ${chalk.bold(tool.name)} — ${tool.description} (${price})`);
+    console.log(`  \${status} \${chalk.bold(tool.name)} — \${tool.description} (\${price})`);
   }
   console.log('');
 
@@ -418,15 +418,15 @@ async function promptQASetup(projectDir: string, projectName: string): Promise<v
   if (selected.includes('testsprite')) {
     const result = generateTestSpriteConfig(projectDir);
     if (result.status === 'success') {
-      success(`TestSprite: ${result.summary}`);
+      success(\`TestSprite: \${result.summary}\`);
     } else {
-      warn(`TestSprite: ${result.summary}`);
+      warn(\`TestSprite: \${result.summary}\`);
     }
   }
 
   if (selected.includes('postman')) {
     const result = generatePostmanCollection(projectDir, projectName);
-    success(`Postman: ${result.summary}`);
+    success(\`Postman: \${result.summary}\`);
   }
 }
 
@@ -440,10 +440,10 @@ async function promptObsidianSetup(projectDir: string, projectName: string): Pro
   if (detection.isInstalled) {
     console.log(chalk.green('  ✅ Obsidian detectado en el sistema'));
     if (detection.installPath) {
-      info(`Ruta: ${detection.installPath}`);
+      info(\`Ruta: \${detection.installPath}\`);
     }
     if (detection.vaults && detection.vaults.length > 0) {
-      info(`Vaults existentes: ${detection.vaults.length}`);
+      info(\`Vaults existentes: \${detection.vaults.length}\`);
     }
     console.log('');
 
@@ -453,7 +453,7 @@ async function promptObsidianSetup(projectDir: string, projectName: string): Pro
         name: 'obsidianChoice',
         message: '¿Deseas vincular Obsidian a este proyecto?',
         choices: [
-          { name: `Sí, crear vault nuevo "${projectName}-knowledge"`, value: 'create-vault' },
+          { name: \`Sí, crear vault nuevo "\${projectName}-knowledge"\`, value: 'create-vault' },
           { name: 'No, usaré solo la vista web del Visualizer', value: 'web-only' },
         ],
       },
@@ -463,9 +463,9 @@ async function promptObsidianSetup(projectDir: string, projectName: string): Pro
     success('Obsidian configurado');
 
   } else {
-    console.log(chalk.yellow('  ⚠️  Obsidian no detectado en el sistema.\n'));
+    console.log(chalk.yellow('  ⚠️  Obsidian no detectado en el sistema.\\n'));
     console.log(chalk.gray('  Obsidian es una herramienta gratuita de notas que permite'));
-    console.log(chalk.gray('  visualizar el grafo de conocimiento del proyecto.\n'));
+    console.log(chalk.gray('  visualizar el grafo de conocimiento del proyecto.\\n'));
 
     const answers = await inquirer.prompt([
       {
@@ -473,7 +473,7 @@ async function promptObsidianSetup(projectDir: string, projectName: string): Pro
         name: 'obsidianChoice',
         message: '¿Qué deseas hacer?',
         choices: [
-          { name: `Descargar Obsidian (se abrirá: ${getObsidianDownloadUrl()})`, value: 'download' },
+          { name: \`Descargar Obsidian (se abrirá: \${getObsidianDownloadUrl()})\`, value: 'download' },
           { name: 'No, usaré solo la vista web', value: 'web-only' },
           { name: 'Ya uso otra herramienta (Logseq/Siguen/Notion) → modo export', value: 'export-only' },
         ],
@@ -490,69 +490,15 @@ async function promptObsidianSetup(projectDir: string, projectName: string): Pro
         const url = getObsidianDownloadUrl();
         const platform = process.platform;
 
-        if (platform === 'win32') exec(`start ${url}`);
-        else if (platform === 'darwin') exec(`open ${url}`);
-        else exec(`xdg-open ${url}`);
+        if (platform === 'win32') exec(\`start \${url}\`);
+        else if (platform === 'darwin') exec(\`open \${url}\`);
+        else exec(\`xdg-open \${url}\`);
 
-        success(`Abriendo ${url} en tu navegador...`);
+        success(\`Abriendo \${url} en tu navegador...\`);
       } catch {
-        info(`Abre manualmente: ${getObsidianDownloadUrl()}`);
+        info(\`Abre manualmente: \${getObsidianDownloadUrl()}\`);
       }
       success('Tutorial guardado en .dev/obsidian/sync-config.md');
     } else if (choice === 'export-only') {
       success('Modo solo-export activado. Datos disponibles en .dev/exports/');
-    } else {
-      info('Obsidian omitido. Puedes configurarlo después con: gestor-memory obsidian');
-    }
-  }
-}
-
-// ── Registrar comando ────────────────────────────────
-
-export function initCommand(program: Command): void {
-  program
-    .command('init')
-    .description('Inicializar Gestor_Memory en el proyecto actual')
-    .option('--no-interactive', 'Ejecutar sin preguntas (usa defaults)')
-    .option('--mode <mode>', 'Modo de DB: destino, filtro, none', 'destino')
-    .option('--name <name>', 'Nombre del proyecto')
-    .option('--path <path>', 'Ruta del proyecto (default: directorio actual)')
-    .action(async (options) => {
-      const projectDir = options.path || process.cwd();
-
-      console.log('');
-      console.log(chalk.cyan.bold('  🧠 Gestor_Memory v2 — Configuración Universal'));
-      console.log('');
-
-      // Detectar proyecto
-      const detectSpinner = ora('Detectando proyecto...').start();
-      const profile = detectProject(projectDir);
-      detectSpinner.stop();
-
-      if (profile.isNew) {
-        info('No se encontraron manifiestos de proyecto.');
-        info(chalk.bold('Modo: PROYECTO NUEVO (desde idea)'));
-      } else {
-        success(`Proyecto detectado: ${chalk.bold(profile.projectName)}`);
-        info(`Stack: ${profile.stack.framework || profile.stack.language}`);
-        info(`Archivos: ${profile.sourceFileCount}`);
-        info(chalk.bold('Modo: PROYECTO EXISTENTE (adaptación)'));
-      }
-
-      console.log('');
-
-      const noInteractive = options.interactive === false;
-
-      if (noInteractive) {
-        if (options.name) profile.projectName = options.name;
-        const prdInput: PRDInput = { profile };
-        await generateFullStructure(projectDir, profile, prdInput, options.mode, true, true);
-      } else {
-        if (profile.isNew) {
-          await initNewProject(projectDir, profile);
-        } else {
-          await initExistingProject(projectDir, profile, false);
-        }
-      }
-    });
-}
+    } else {\n      info('Obsidian omitido. Puedes configurarlo después con: gestor-memory obsidian');\n    }\n  }\n}\n\n// ── Registrar comando ────────────────────────────────\n\nexport function initCommand(program: Command): void {\n  program\n    .command('init')\n    .description('Inicializar Gestor_Memory en el proyecto actual')\n    .option('--no-interactive', 'Ejecutar sin preguntas (usa defaults)')\n    .option('--mode <mode>', 'Modo de DB: destino, filtro, none', 'destino')\n    .option('--name <name>', 'Nombre del proyecto')\n    .option('--path <path>', 'Ruta del proyecto (default: directorio actual)')\n    .action(async (options) => {\n      const projectDir = options.path || process.cwd();\n\n      console.log('');\n      console.log(chalk.cyan.bold('  🧠 Gestor_Memory v2 — Configuración Universal'));\n      console.log('');\n\n      // Detectar proyecto\n      const detectSpinner = ora('Detectando proyecto...').start();\n      const profile = detectProject(projectDir);\n      detectSpinner.stop();\n\n      if (profile.isNew) {\n        info('No se encontraron manifiestos de proyecto.');\n        info(chalk.bold('Modo: PROYECTO NUEVO (desde idea)'));\n      } else {\n        success(\`Proyecto detectado: \${chalk.bold(profile.projectName)}\`);\n        info(\`Stack: \${profile.stack.framework || profile.stack.language}\`);\n        info(\`Archivos: \${profile.sourceFileCount}\`);\n        info(chalk.bold('Modo: PROYECTO EXISTENTE (adaptación)'));\n      }\n\n      console.log('');\n\n      const noInteractive = options.interactive === false;\n\n      if (noInteractive) {\n        if (options.name) profile.projectName = options.name;\n        const prdInput: PRDInput = { profile };\n        await generateFullStructure(projectDir, profile, prdInput, options.mode, true, true);\n      } else {\n        if (profile.isNew) {\n          await initNewProject(projectDir, profile);\n        } else {\n          await initExistingProject(projectDir, profile, false);\n        }\n      }\n    });\n}\n

@@ -305,7 +305,7 @@ export function generateQAReport(projectDir: string, results: QAResult[]): strin
 
 | Herramienta | Estado | Resultado |
 |:---|:---|:---|
-${results.map(r => `| **${r.tool}** | ${statusEmoji(r.status)} ${r.status} | ${r.summary} |`).join('\n')}
+| ${results.map(r => `| **${r.tool}** | ${statusEmoji(r.status)} ${r.status} | ${r.summary} |`).join('\n')}
 
 ---
 

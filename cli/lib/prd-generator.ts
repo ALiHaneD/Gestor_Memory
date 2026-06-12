@@ -320,7 +320,7 @@ export function generateRoadmap(input: PRDInput, outputDir: string): string {
   const { profile } = input;
 
   const roadmap = `# Roadmap: ${profile.projectName}
-> Generado por: Gestor_Memory v2
+> Generado por: Gestor_Memory v2 (Protocolo Open Box v2.0)
 > Fecha: ${now}
 > Estado: ${profile.isNew ? 'INCEPTION' : 'EN PROGRESO'}
 
@@ -329,45 +329,55 @@ export function generateRoadmap(input: PRDInput, outputDir: string): string {
 ## 📍 Estado Actual (${now})
 
 ${profile.isNew
-    ? `**Fase:** Idea / Diseño inicial
+    ? \`**Fase:** Idea / Diseño inicial
 **Completado:** 0%
-**Próximo paso:** Definir arquitectura y stack`
-    : `**Fase:** Desarrollo activo
-**Stack:** ${profile.stack.framework || profile.stack.language}
-**Archivos fuente:** ${profile.sourceFileCount}
-**Modelos DB:** ${profile.databases.map(d => `${d.modelCount || '?'} (${d.type})`).join(', ') || 'N/A'}
-**Agentes IA:** ${profile.agentConfig.hasAgentsMd ? 'UCA v' + (profile.agentConfig.ucaVersion || '1') : 'No configurado'}
-**Próximo paso:** Revisar PRD generado y ajustar`}
+**Próximo paso:** Definir arquitectura y stack\`
+    : \`**Fase:** Desarrollo activo
+**Stack:** \${profile.stack.framework || profile.stack.language}
+**Archivos fuente:** \${profile.sourceFileCount}
+**Modelos DB:** \${profile.databases.map(d => \`\${d.modelCount || '?'} (\${d.type})\`).join(', ') || 'N/A'}
+**Agentes IA:** \${profile.agentConfig.hasAgentsMd ? 'UCA v' + (profile.agentConfig.ucaVersion || '1') : 'No configurado'}
+**Próximo paso:** Revisar PRD generado y ajustar\`}
 
 ---
 
-## Fase 1: Fundación 🏗️
-${profile.isNew
-    ? `- [ ] Definir stack tecnológico
+## Fase 1: 🎨 Diseño UI/UX
+- [ ] Definición de paleta HSL y estética Premium.
+- [ ] Wireframes y prototipos de alta fidelidad (Stitch).
+
+## Fase 2: 🏗️ Estructura y Dependencias
+\${profile.isNew
+    ? \`- [x] Inicialización de Gestor Memory v2
+- [ ] Definir stack tecnológico
 - [ ] Inicializar proyecto (package.json, tsconfig, etc.)
-- [ ] Configurar base de datos
-- [ ] Implementar autenticación
-- [ ] Configurar CI/CD`
-    : `- [x] Stack definido: ${profile.stack.framework || profile.stack.language}
-- [x] Proyecto inicializado (${profile.sourceFileCount} archivos)
-- [${profile.databases.length > 0 ? 'x' : ' '}] Base de datos configurada
-- [${profile.integrations.hasCI ? 'x' : ' '}] CI/CD configurado`}
+- [ ] Configurar agentes (AGENTS, CLAUDE, GEMINI)\`
+    : \`- [x] Stack detectado: \${profile.stack.framework || profile.stack.language}
+- [x] Proyecto inicializado (\${profile.sourceFileCount} archivos)
+- [\${profile.agentConfig.hasAgentsMd ? 'x' : ' '}] Agentes configurados\`
+}
 
-## Fase 2: Core Features ⚡
-- [ ] Feature principal 1 — _Definir en PRD_
-- [ ] Feature principal 2 — _Definir en PRD_
-- [ ] Feature principal 3 — _Definir en PRD_
+## Fase 3: 🗄️ Base de Datos
+- [ ] Modelado en Core Memory (PostgreSQL).
+- [ ] Configuración de esquemas y vectores (pgvector).
+- [\${profile.databases.length > 0 ? 'x' : ' '}] Base de datos detectada (\${profile.databases.map(d => d.type).join(', ') || 'N/A'})
 
-## Fase 3: Testing & QA 🧪
-- [ ] Ejecutar Snyk scan (seguridad)
-- [ ] Configurar TestSprite (E2E automático)
-- [ ] Crear colección Postman (API)
-- [ ] Alcanzar cobertura objetivo (80% unit)
+## Fase 4: ⚡ Funciones Especiales
+- [ ] Implementación de lógica de negocio principal.
+- [ ] Integración de hilos de comunicación y agentes especialistas.
 
-## Fase 4: Deployment 🚀
-- [ ] Configurar ambiente de staging
-- [ ] Configurar ambiente de producción
-- [ ] Definir estrategia de rollback
+## Fase 5: 🚀 Despliegue
+- [ ] Configuración de CI/CD (GitHub Actions / Vercel).
+- [ ] Deployment en entorno de producción.
+- [\${profile.integrations.hasCI ? 'x' : ' '}] CI/CD configurado
+
+## Fase 6: 🧪 Auditoría y QA
+- [ ] Pruebas E2E con TestSprite.
+- [ ] Escaneo de seguridad con Snyk (SCA/Code).
+- [ ] Colección de Postman para validación de API.
+
+## Fase 7: 🔄 Revisión y Ajustes
+- [ ] Optimización de performance y Handoff final.
+- [ ] Sincronización completa con Obsidian Común.
 
 ---
 
@@ -375,15 +385,18 @@ ${profile.isNew
 
 | Fase | Completado | En Progreso | Pendiente |
 |:---|:---|:---|:---|
-| **1** Fundación | ${profile.isNew ? '0%' : '~70%'} | ${profile.isNew ? '0%' : '~20%'} | ${profile.isNew ? '100%' : '~10%'} |
-| **2** Core | 0% | 0% | 100% |
-| **3** Testing | 0% | 0% | 100% |
-| **4** Deploy | 0% | 0% | 100% |
+| **1** Diseño | 0% | 0% | 100% |
+| **2** Estructura | \${profile.isNew ? '50%' : '100%'} | \${profile.isNew ? '50%' : '0%'} | 0% |
+| **3** DB | 0% | 0% | 100% |
+| **4** Funciones | 0% | 0% | 100% |
+| **5** Deploy | 0% | 0% | 100% |
+| **6** QA | 0% | 0% | 100% |
+| **7** Ajustes | 0% | 0% | 100% |
 
 ---
 
 *Actualiza este roadmap con cada milestone completado.*
-`;
+\`;
 
   const roadmapPath = path.join(outputDir, 'roadmap.md');
   fs.writeFileSync(roadmapPath, roadmap, 'utf-8');
@@ -397,10 +410,10 @@ ${profile.isNew
 export function generateStackAnalysis(profile: ProjectProfile, outputDir: string): string {
   const now = new Date().toISOString().split('T')[0];
 
-  const analysis = `# Stack Analysis: ${profile.projectName}
+  const analysis = \`# Stack Analysis: \${profile.projectName}
 > Generado por: Gestor_Memory v2
-> Fecha: ${now}
-> Modo: ${profile.isNew ? 'Proyecto nuevo' : 'Proyecto existente'}
+> Fecha: \${now}
+> Modo: \${profile.isNew ? 'Proyecto nuevo' : 'Proyecto existente'}
 
 ---
 
@@ -408,59 +421,54 @@ export function generateStackAnalysis(profile: ProjectProfile, outputDir: string
 
 | Propiedad | Valor |
 |:---|:---|
-| **Runtime** | ${profile.stack.runtime} |
-| **Language** | ${profile.stack.language} |
-| **Framework** | ${profile.stack.framework || 'N/A'} |
-| **Styling** | ${profile.stack.styling || 'N/A'} |
-| **Package Manager** | ${profile.stack.packageManager || 'N/A'} |
+| **Runtime** | \${profile.stack.runtime} |
+| **Language** | \${profile.stack.language} |
+| **Framework** | \${profile.stack.framework || 'N/A'} |
+| **Styling** | \${profile.stack.styling || 'N/A'} |
+| **Package Manager** | \${profile.stack.packageManager || 'N/A'} |
 
 ## Base de Datos
 
-${profile.databases.length > 0
-    ? profile.databases.map(db => `### ${db.type}
-- Schema: \`${db.schemaPath || 'N/A'}\`
-- Modelos: ${db.modelCount || 'N/A'}
-- Migraciones: ${db.hasMigrations ? 'Sí' : 'No'}
-- RLS: ${db.hasRLS ? 'Sí' : 'No'}
-${db.models ? '\nModelos: ' + db.models.map(m => `\`${m}\``).join(', ') : ''}`).join('\n\n')
+\${profile.databases.length > 0
+    ? profile.databases.map(db => \`### \${db.type}\\n- Schema: \\\\\`\${db.schemaPath || 'N/A'}\\\\\`\\n- Modelos: \${db.modelCount || 'N/A'}\\n- Migraciones: \${db.hasMigrations ? 'Sí' : 'No'}\\n- RLS: \${db.hasRLS ? 'Sí' : 'No'}\${db.models ? '\\\\nModelos: ' + db.models.map(m => \`\\\\\`\${m}\\\\\` \`).join(', ') : ''}\`).join('\\\\n\\\\n')
     : '_No se detectaron bases de datos._'}
 
 ## Configuración de Agentes
 
 | Archivo | Estado |
 |:---|:---|
-| \`AGENTS.md\` | ${profile.agentConfig.hasAgentsMd ? '✅ Existe' : '❌ No existe'} |
-| \`CLAUDE.md\` | ${profile.agentConfig.hasClaudeMd ? '✅ Existe' : '❌ No existe'} |
-| \`GEMINI.md\` | ${profile.agentConfig.hasGeminiMd ? '✅ Existe' : '❌ No existe'} |
-| \`.agent/\` | ${profile.agentConfig.hasAgentDir ? '✅ Existe' : '❌ No existe'} |
-| \`.agent/handoffs/\` | ${profile.agentConfig.hasHandoffs ? '✅ Existe' : '❌ No existe'} |
+| \\\\\`AGENTS.md\\\\\` | \${profile.agentConfig.hasAgentsMd ? '✅ Existe' : '❌ No existe'} |
+| \\\\\`CLAUDE.md\\\\\` | \${profile.agentConfig.hasClaudeMd ? '✅ Existe' : '❌ No existe'} |
+| \\\\\`GEMINI.md\\\\\` | \${profile.agentConfig.hasGeminiMd ? '✅ Existe' : '❌ No existe'} |
+| \\\\\`.agent/\\\\\` | \${profile.agentConfig.hasAgentDir ? '✅ Existe' : '❌ No existe'} |
+| \\\\\`.agent/handoffs/\\\\\` | \${profile.agentConfig.hasHandoffs ? '✅ Existe' : '❌ No existe'} |
 
 ## Integraciones
 
 | Integración | Estado |
 |:---|:---|
-| **MCP Config** | ${profile.integrations.hasMCPConfig ? '✅' : '❌'} |
-| **Docker** | ${profile.integrations.hasDocker ? '✅' : '❌'} |
-| **CI/CD** | ${profile.integrations.hasCI ? '✅' : '❌'} |
-| **Git** | ${profile.hasGit ? '✅' : '❌'} |
-| **Variables .env** | ${profile.integrations.envVars?.length || 0} detectadas |
+| **MCP Config** | \${profile.integrations.hasMCPConfig ? '✅' : '❌'} |
+| **Docker** | \${profile.integrations.hasDocker ? '✅' : '❌'} |
+| **CI/CD** | \${profile.integrations.hasCI ? '✅' : '❌'} |
+| **Git** | \${profile.hasGit ? '✅' : '❌'} |
+| **Variables .env** | \${profile.integrations.envVars?.length || 0} detectadas |
 
-${profile.integrations.mcpServers && profile.integrations.mcpServers.length > 0
-    ? `### MCP Servers Activos\n${profile.integrations.mcpServers.map(s => `- \`${s}\``).join('\n')}`
+\${profile.integrations.mcpServers && profile.integrations.mcpServers.length > 0
+    ? \`### MCP Servers Activos\\\\n\${profile.integrations.mcpServers.map(s => \`- \\\\\`\${s}\\\\\` \`).join('\\\\n')}\`
     : ''}
 
 ## Métricas del Proyecto
 
 | Métrica | Valor |
 |:---|:---|
-| **Archivos fuente** | ${profile.sourceFileCount} |
-| **Tiene Git** | ${profile.hasGit ? 'Sí' : 'No'} |
-| **Tiene .gitignore** | ${profile.hasGitignore ? 'Sí' : 'No'} |
+| **Archivos fuente** | \${profile.sourceFileCount} |
+| **Tiene Git** | \${profile.hasGit ? 'Sí' : 'No'} |
+| **Tiene .gitignore** | \${profile.hasGitignore ? 'Sí' : 'No'} |
 
 ---
 
-*Este análisis se regenera cada vez que se ejecuta \`gestor-memory init\`.*
-`;
+*Este análisis se regenera cada vez que se ejecuta \\\\\`gestor-memory init\\\\\`.*
+\`;
 
   const analysisPath = path.join(outputDir, 'stack-analysis.md');
   fs.writeFileSync(analysisPath, analysis, 'utf-8');
